@@ -1,0 +1,143 @@
+import { z } from 'zod'
+
+// ─── Validación NIT colombiano (algoritmo DIAN) ───────────
+function validarNIT(nit: string): boolean {
+  // Acepta formatos: "123456789-1" o "1234567891"
+  const clean = nit.replace(/[\s.-]/g, '')
+  if (!/^\d{9,10}$/.test(clean)) return false
+
+  const digits = clean.padStart(10, '0')
+  const primes = [71, 67, 59, 53, 47, 43, 41, 37, 29, 23, 19, 17, 13, 7, 3]
+  const nitDigits = digits.slice(0, 9).split('').map(Number)
+
+  // El dígito de verificación es el último dígito
+  const checkDigit = parseInt(digits[9])
+
+  const sum = nitDigits.reduce(
+    (acc, d, i) => acc + d * primes[primes.length - 9 + i],
+    0
+  )
+
+  const remainder = sum % 11
+  const expected = remainder < 2 ? remainder : 11 - remainder
+
+  return expected === checkDigit
+}
+
+// ─── Esquema principal del formulario ────────────────────
+export const leadSchema = z
+  .object({
+    // Datos financieros
+    valor_inversion: z
+      .number({ required_error: 'El valor de inversión es obligatorio' })
+      .positive('Debe ser un valor positivo')
+      .min(1_000_000, 'El valor mínimo es $1.000.000 COP'),
+
+    valor_nominal: z
+      .number()
+      .positive()
+      .optional(), // Calculado automáticamente: valor_inversion * 1.65
+
+    // Expectativas de venta
+    porcentaje_min: z
+      .number({ required_error: 'El porcentaje mínimo es obligatorio' })
+      .min(0, 'Debe ser mayor o igual a 0')
+      .max(39, 'El porcentaje no puede superar el 39%'),
+
+    porcentaje_max: z
+      .number({ required_error: 'El porcentaje máximo es obligatorio' })
+      .min(0, 'Debe ser mayor o igual a 0')
+      .max(39, 'El porcentaje no puede superar el 39%'),
+
+    // Datos de validación del título
+    nit: z
+      .string({ required_error: 'El NIT es obligatorio' })
+      .min(1, 'El NIT es obligatorio')
+      .refine(validarNIT, {
+        message: 'El NIT no es válido. Verifique el dígito de verificación.',
+      }),
+
+    razon_social: z
+      .string({ required_error: 'La razón social es obligatoria' })
+      .min(2, 'La razón social debe tener al menos 2 caracteres')
+      .max(200, 'Máximo 200 caracteres'),
+
+    anio_inversion: z
+      .number({ required_error: 'El año de inversión es obligatorio' })
+      .int('Debe ser un año entero')
+      .min(2000, 'El año debe ser posterior al 2000')
+      .max(new Date().getFullYear(), 'El año no puede ser futuro'),
+
+    nombre_proyecto: z
+      .string({ required_error: 'El nombre del proyecto es obligatorio' })
+      .min(2, 'Mínimo 2 caracteres')
+      .max(300, 'Máximo 300 caracteres'),
+
+    // Estado del certificado
+    certificado_emitido: z.boolean({
+      required_error: 'Indique si el certificado fue emitido',
+    }),
+
+    fecha_emision: z
+      .string()
+      .optional()
+      .nullable(), // Solo requerido si certificado_emitido = false
+
+    // Condiciones de venta
+    condicion_venta: z.enum(['contado', 'credito'], {
+      required_error: 'Seleccione la condición de venta',
+    }),
+
+    necesita_recursos: z.boolean({
+      required_error: 'Indique si necesita recursos para ejecución',
+    }),
+
+    // Datos de contacto
+    nombre_contacto: z
+      .string({ required_error: 'Su nombre es obligatorio' })
+      .min(2, 'Mínimo 2 caracteres')
+      .max(100, 'Máximo 100 caracteres'),
+
+    email_contacto: z
+      .string({ required_error: 'El correo electrónico es obligatorio' })
+      .email('Ingrese un correo electrónico válido'),
+
+    telefono_contacto: z
+      .string()
+      .optional()
+      .refine(
+        (val) => !val || /^(\+57)?[0-9]{10}$/.test(val.replace(/\s/g, '')),
+        { message: 'Ingrese un número de teléfono colombiano válido (10 dígitos)' }
+      ),
+
+    // Habeas Data — Ley 1581 de 2012
+    habeas_data: z
+      .boolean()
+      .refine((val) => val === true, {
+        message: 'Debe aceptar la política de tratamiento de datos personales para continuar',
+      }),
+  })
+  .refine(
+    (data) => data.porcentaje_min <= data.porcentaje_max,
+    {
+      message: 'El porcentaje mínimo no puede ser mayor al máximo',
+      path: ['porcentaje_min'],
+    }
+  )
+  .refine(
+    (data) => {
+      // Si el certificado NO fue emitido, la fecha estimada es obligatoria
+      if (data.certificado_emitido === false) {
+        return !!data.fecha_emision
+      }
+      return true
+    },
+    {
+      message: 'Ingrese la fecha estimada de emisión del certificado',
+      path: ['fecha_emision'],
+    }
+  )
+
+export type LeadFormValues = z.infer<typeof leadSchema>
+
+export const leadServerSchema = leadSchema

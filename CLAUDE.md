@@ -23,6 +23,7 @@ Se actualiza cada vez que se realiza un cambio significativo en el proyecto.
 | Framework | Next.js 15 (App Router) |
 | Lenguaje | TypeScript |
 | Estilos | Tailwind CSS v4 |
+| Animaciones | Motion (Librería moderna para crear animaciones y gestos interactivos fluidos) |
 | Componentes UI | shadcn/ui |
 | Formularios | React Hook Form + Zod |
 | Base de datos | PostgreSQL (Supabase) |
@@ -149,16 +150,27 @@ certcol-web/
 
 ## Historial de cambios
 
+### 2026-04-09 — Revisión visual y Corrección de Bugs
+- [x] Inicializado proyecto Next.js 16+ (App Router).
+- [x] Configuración de Tailwind v4 y componentes base (Base UI / shadcn/ui).
+- [x] Creamos el esquema validado en Zod y React Hook Form (`lead.schema.ts`).
+- [x] Desarrollada la Landing page principal y flujos de confirmación pre-registro.
+- [x] Corrección: Orden de `@import` en `globals.css` para evitar fallo en compilación PostCSS con Tailwind v4.
+- [x] Corrección: Fix en runtime de Zod donde fallaba `.extend()` al extender un objeto previamente refinado.
+- [x] Corrección: Cambio masivo del prop inyectable `asChild` a `render={<Link href="..." />}` tras conflictos con `@base-ui/react`.
+- [x] Agregado: Instalación de `motion` en el proyecto para implementar animaciones y transiciones fluidas.
+- [ ] Pendiente: Migrar logo y recursos gráficos desde `../Recursos` a la nueva estructura de `/public`.
+
 ### 2026-04-08 — Sesión inicial
 - [x] Leídos documentos: `propuesta-certcol.docx` y `stack-tecnologico.docx`
 - [x] Consultado proyecto CertCol en Stitch MCP (ID: `12730165767746243568`)
 - [x] Creada carpeta `certcol-web/`
 - [x] Creado `CLAUDE.md` con arquitectura, design system y modelo de datos
-- [ ] Inicializar proyecto Next.js 15
-- [ ] Configurar Tailwind v4 + design tokens del sistema Stitch
-- [ ] Instalar y configurar shadcn/ui
-- [ ] Crear esquema Zod del formulario
-- [ ] Desarrollar landing page (Hero, WhatIsACID, HowItWorks, Benefits, Form, Footer)
+- [x] Inicializar proyecto Next.js 15
+- [x] Configurar Tailwind v4 + design tokens del sistema Stitch
+- [x] Instalar y configurar shadcn/ui
+- [x] Crear esquema Zod del formulario
+- [x] Desarrollar landing page (Hero, WhatIsACID, HowItWorks, Benefits, Form, Footer)
 - [ ] Desarrollar panel administrativo (Login, Dashboard, Detalle)
 - [ ] Configurar Supabase (cliente + tipos)
 - [ ] Configurar Resend (plantillas de correo)
