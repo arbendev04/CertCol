@@ -29,7 +29,7 @@ export const leadSchema = z
   .object({
     // Datos financieros
     valor_inversion: z
-      .number({ required_error: 'El valor de inversión es obligatorio' })
+      .number({ message: 'El valor de inversión es obligatorio' })
       .positive('Debe ser un valor positivo')
       .min(1_000_000, 'El valor mínimo es $1.000.000 COP'),
 
@@ -40,42 +40,42 @@ export const leadSchema = z
 
     // Expectativas de venta
     porcentaje_min: z
-      .number({ required_error: 'El porcentaje mínimo es obligatorio' })
+      .number({ message: 'El porcentaje mínimo es obligatorio' })
       .min(0, 'Debe ser mayor o igual a 0')
       .max(39, 'El porcentaje no puede superar el 39%'),
 
     porcentaje_max: z
-      .number({ required_error: 'El porcentaje máximo es obligatorio' })
+      .number({ message: 'El porcentaje máximo es obligatorio' })
       .min(0, 'Debe ser mayor o igual a 0')
       .max(39, 'El porcentaje no puede superar el 39%'),
 
     // Datos de validación del título
     nit: z
-      .string({ required_error: 'El NIT es obligatorio' })
+      .string({ message: 'El NIT es obligatorio' })
       .min(1, 'El NIT es obligatorio')
       .refine(validarNIT, {
         message: 'El NIT no es válido. Verifique el dígito de verificación.',
       }),
 
     razon_social: z
-      .string({ required_error: 'La razón social es obligatoria' })
+      .string({ message: 'La razón social es obligatoria' })
       .min(2, 'La razón social debe tener al menos 2 caracteres')
       .max(200, 'Máximo 200 caracteres'),
 
     anio_inversion: z
-      .number({ required_error: 'El año de inversión es obligatorio' })
+      .number({ message: 'El año de inversión es obligatorio' })
       .int('Debe ser un año entero')
       .min(2000, 'El año debe ser posterior al 2000')
       .max(new Date().getFullYear(), 'El año no puede ser futuro'),
 
     nombre_proyecto: z
-      .string({ required_error: 'El nombre del proyecto es obligatorio' })
+      .string({ message: 'El nombre del proyecto es obligatorio' })
       .min(2, 'Mínimo 2 caracteres')
       .max(300, 'Máximo 300 caracteres'),
 
     // Estado del certificado
     certificado_emitido: z.boolean({
-      required_error: 'Indique si el certificado fue emitido',
+      message: 'Indique si el certificado fue emitido',
     }),
 
     fecha_emision: z
@@ -85,21 +85,21 @@ export const leadSchema = z
 
     // Condiciones de venta
     condicion_venta: z.enum(['contado', 'credito'], {
-      required_error: 'Seleccione la condición de venta',
+      message: 'Seleccione la condición de venta',
     }),
 
     necesita_recursos: z.boolean({
-      required_error: 'Indique si necesita recursos para ejecución',
+      message: 'Indique si necesita recursos para ejecución',
     }),
 
     // Datos de contacto
     nombre_contacto: z
-      .string({ required_error: 'Su nombre es obligatorio' })
+      .string({ message: 'Su nombre es obligatorio' })
       .min(2, 'Mínimo 2 caracteres')
       .max(100, 'Máximo 100 caracteres'),
 
     email_contacto: z
-      .string({ required_error: 'El correo electrónico es obligatorio' })
+      .string({ message: 'El correo electrónico es obligatorio' })
       .email('Ingrese un correo electrónico válido'),
 
     telefono_contacto: z
