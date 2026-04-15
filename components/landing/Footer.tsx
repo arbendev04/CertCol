@@ -12,11 +12,11 @@ export function Footer() {
           {/* Marca */}
           <div>
             <Image
-              src="/logo-oscuro.png"
+              src="/img/logo.webp"
               alt="certCol"
-              width={120}
-              height={36}
-              className="h-9 w-auto mb-4 brightness-0 invert"
+              width={180}
+              height={54}
+              className="h-[54px] w-auto mb-4 brightness-0 invert"
             />
             <p className="text-white/50 text-sm leading-relaxed max-w-xs">
               Plataforma profesional para la compra-venta de Certificados de

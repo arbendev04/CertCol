@@ -63,3 +63,6 @@ desktop.ini
 *.log
 .eslintcache
 .stylelintcache
+
+# Claude Code (auto-generated, not project code)
+AGENTS.md

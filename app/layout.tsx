@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import { Space_Grotesk, Plus_Jakarta_Sans } from 'next/font/google'
+import { Space_Grotesk, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google'
+import { ThemeProvider } from 'next-themes'
 import './globals.css'
 
 const spaceGrotesk = Space_Grotesk({
@@ -14,11 +15,21 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   display: 'swap',
 })
 
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap',
+})
+
 export const metadata: Metadata = {
   title: 'certCol — Compra-venta de Certificados de Inversión para el Desarrollo',
   description:
     'Plataforma profesional para la gestión y compra-venta de Certificados de Inversión para el Desarrollo (CID) en Colombia. Proceso transparente, seguro y eficiente.',
   keywords: ['CID', 'certificados de inversión', 'Colombia', 'títulos valores', 'inversión'],
+  icons: {
+    icon: '/img/favico.webp',
+    apple: '/img/favico.webp',
+  },
   openGraph: {
     title: 'certCol — CID Colombia',
     description: 'Compra-venta de Certificados de Inversión para el Desarrollo',
@@ -35,9 +46,14 @@ export default function RootLayout({
   return (
     <html
       lang="es-CO"
-      className={`${spaceGrotesk.variable} ${plusJakartaSans.variable} h-full antialiased`}
+      className={`${spaceGrotesk.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full bg-surface text-on-surface">{children}</body>
+      <body className="min-h-full bg-background text-foreground">
+        <ThemeProvider attribute="class" defaultTheme="light" disableTransitionOnChange>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   )
 }

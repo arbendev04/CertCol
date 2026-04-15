@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -35,11 +36,11 @@ export function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/logo.png"
+            src="/img/logo.webp"
             alt="certCol"
-            width={120}
-            height={36}
-            className="h-9 w-auto"
+            width={240}
+            height={72}
+            className="h-[72px] w-auto"
             priority
           />
         </Link>
@@ -57,25 +58,29 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* CTA desktop */}
+        {/* CTA + toggle desktop */}
         <div className="hidden md:flex items-center gap-3">
+          <ThemeToggle />
           <Button
             render={<Link href="#formulario" />}
             size="sm"
-            className="bg-[#0A4D8C] hover:bg-[#003667] text-white rounded-lg px-5 font-semibold transition-all duration-200 hover:scale-[1.02]"
+            className="bg-[#0A4D8C] hover:bg-[#003667] dark:bg-[#A5C8FF] dark:hover:bg-[#D4E3FF] dark:text-[#003667] text-white rounded-lg px-5 font-semibold transition-all duration-200 hover:scale-[1.02]"
           >
             Registrar mi CID
           </Button>
         </div>
 
-        {/* Burger mobile */}
-        <button
-          className="md:hidden p-2 rounded-lg hover:bg-surface-container transition-colors"
-          onClick={() => setOpen(!open)}
-          aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
-        >
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
+        {/* Burger + toggle mobile */}
+        <div className="md:hidden flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            className="p-2 rounded-lg hover:bg-surface-container transition-colors"
+            onClick={() => setOpen(!open)}
+            aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
+          >
+            {open ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}

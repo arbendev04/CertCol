@@ -1,59 +1,62 @@
 /* ─── Fuentes de Google ─────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
+/* ─── Design tokens (referencias a CSS vars → dark-mode aware) ── */
 @theme inline {
-  /* Fuentes CertCol */
   --font-heading: 'Space Grotesk', sans-serif;
-  --font-sans: 'Plus Jakarta Sans', sans-serif;
-  --font-mono: ui-monospace, monospace;
+  --font-sans:    'Plus Jakarta Sans', sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, monospace;
 
-  /* Colores del sistema de diseño Stitch "The Architectural Intelligence" */
-  --color-brand-primary:          #0A4D8C;
-  --color-brand-primary-dark:     #003667;
-  --color-brand-primary-light:    #D4E3FF;
-  --color-brand-secondary:        #00C896;
-  --color-brand-secondary-light:  #60FCC6;
-  --color-brand-tertiary:         #1E90D4;
-  --color-brand-tertiary-light:   #CCE5FF;
+  /* Brand */
+  --color-brand-primary:         var(--brand-primary);
+  --color-brand-primary-dark:    var(--brand-primary-dark);
+  --color-brand-primary-light:   var(--brand-primary-light);
+  --color-brand-secondary:       var(--brand-secondary);
+  --color-brand-secondary-light: var(--brand-secondary-light);
+  --color-brand-tertiary:        var(--brand-tertiary);
+  --color-brand-tertiary-light:  var(--brand-tertiary-light);
 
-  --color-surface:                #FCF9F8;
-  --color-surface-low:            #F6F3F2;
-  --color-surface-container:      #F0EDEC;
-  --color-surface-high:           #EAE7E7;
-  --color-surface-highest:        #E5E2E1;
-  --color-surface-dim:            #DCD9D9;
-  --color-surface-bright:         #FFFFFF;
+  /* Superficies */
+  --color-surface:           var(--surface);
+  --color-surface-low:       var(--surface-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-high:      var(--surface-high);
+  --color-surface-highest:   var(--surface-highest);
+  --color-surface-dim:       var(--surface-dim);
+  --color-surface-bright:    var(--surface-bright);
 
-  --color-on-surface:             #1C1B1B;
-  --color-on-surface-variant:     #424750;
+  /* Texto */
+  --color-on-surface:         var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
 
-  --color-outline:                #727781;
-  --color-outline-variant:        #C2C6D2;
+  /* Bordes */
+  --color-outline:         var(--outline);
+  --color-outline-variant: var(--outline-variant);
 
-  /* Tokens shadcn mapeados a CertCol */
-  --color-background:   var(--background);
-  --color-foreground:   var(--foreground);
-  --color-card:         var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover:      var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary:      var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary:    var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted:        var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent:       var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive:  var(--destructive);
-  --color-border:       var(--border);
-  --color-input:        var(--input);
-  --color-ring:         var(--ring);
+  /* shadcn tokens (ya usaban var()) */
+  --color-background:          var(--background);
+  --color-foreground:          var(--foreground);
+  --color-card:                var(--card);
+  --color-card-foreground:     var(--card-foreground);
+  --color-popover:             var(--popover);
+  --color-popover-foreground:  var(--popover-foreground);
+  --color-primary:             var(--primary);
+  --color-primary-foreground:  var(--primary-foreground);
+  --color-secondary:           var(--secondary);
+  --color-secondary-foreground:var(--secondary-foreground);
+  --color-muted:               var(--muted);
+  --color-muted-foreground:    var(--muted-foreground);
+  --color-accent:              var(--accent);
+  --color-accent-foreground:   var(--accent-foreground);
+  --color-destructive:         var(--destructive);
+  --color-border:              var(--border);
+  --color-input:               var(--input);
+  --color-ring:                var(--ring);
 
   --radius-sm:  calc(var(--radius) * 0.6);
   --radius-md:  calc(var(--radius) * 0.8);
@@ -64,32 +67,108 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* ─── Tokens de color CSS (modo claro) ─────────────────── */
+/* ─── Modo claro (valores por defecto) ──────────────────── */
 :root {
-  /* shadcn tokens — mapeados al sistema CertCol */
-  --background:           #FCF9F8;
-  --foreground:           #1C1B1B;
-  --card:                 #FFFFFF;
-  --card-foreground:      #1C1B1B;
-  --popover:              #FFFFFF;
-  --popover-foreground:   #1C1B1B;
-  --primary:              #0A4D8C;
-  --primary-foreground:   #FFFFFF;
-  --secondary:            #F0EDEC;
-  --secondary-foreground: #1C1B1B;
-  --muted:                #F6F3F2;
-  --muted-foreground:     #424750;
-  --accent:               #00C896;
-  --accent-foreground:    #FFFFFF;
-  --destructive:          #BA1A1A;
-  --border:               rgba(194, 198, 210, 0.3);
-  --input:                rgba(194, 198, 210, 0.2);
-  --ring:                 #0A4D8C;
+  /* Brand */
+  --brand-primary:         #0A4D8C;
+  --brand-primary-dark:    #003667;
+  --brand-primary-light:   #D4E3FF;
+  --brand-secondary:       #00C896;
+  --brand-secondary-light: #60FCC6;
+  --brand-tertiary:        #1E90D4;
+  --brand-tertiary-light:  #CCE5FF;
 
-  --radius: 0.5rem;
+  /* Superficies */
+  --surface:           #FCF9F8;
+  --surface-low:       #F6F3F2;
+  --surface-container: #F0EDEC;
+  --surface-high:      #EAE7E7;
+  --surface-highest:   #E5E2E1;
+  --surface-dim:       #DCD9D9;
+  --surface-bright:    #FFFFFF;
+
+  /* Texto */
+  --on-surface:         #1C1B1B;
+  --on-surface-variant: #424750;
+
+  /* Bordes */
+  --outline:         #727781;
+  --outline-variant: #C2C6D2;
+
+  /* shadcn */
+  --background:            #FCF9F8;
+  --foreground:            #1C1B1B;
+  --card:                  #FFFFFF;
+  --card-foreground:       #1C1B1B;
+  --popover:               #FFFFFF;
+  --popover-foreground:    #1C1B1B;
+  --primary:               #0A4D8C;
+  --primary-foreground:    #FFFFFF;
+  --secondary:             #F0EDEC;
+  --secondary-foreground:  #1C1B1B;
+  --muted:                 #F6F3F2;
+  --muted-foreground:      #424750;
+  --accent:                #00C896;
+  --accent-foreground:     #FFFFFF;
+  --destructive:           #BA1A1A;
+  --border:                rgba(194, 198, 210, 0.3);
+  --input:                 rgba(194, 198, 210, 0.2);
+  --ring:                  #0A4D8C;
+  --radius:                0.5rem;
 }
 
-/* ─── Utilidades globales ───────────────────────────────── */
+/* ─── Modo oscuro ─── (paleta Stitch dark tier) ─────────── */
+.dark {
+  color-scheme: dark;
+
+  /* Brand — variantes claras para fondos oscuros */
+  --brand-primary:         #A5C8FF;
+  --brand-primary-dark:    #D4E3FF;
+  --brand-primary-light:   #0A4D8C;
+  --brand-secondary:       #3ADFAB;
+  --brand-secondary-light: #00C896;
+  --brand-tertiary:        #92CCFF;
+  --brand-tertiary-light:  #1E90D4;
+
+  /* Superficies oscuras */
+  --surface:           #141313;
+  --surface-low:       #1C1B1B;
+  --surface-container: #252121;
+  --surface-high:      #2E2929;
+  --surface-highest:   #3A3535;
+  --surface-dim:       #0F0E0E;
+  --surface-bright:    #302B2B;
+
+  /* Texto */
+  --on-surface:         #E5E2E1;
+  --on-surface-variant: #C2C6D2;
+
+  /* Bordes */
+  --outline:         #8E9099;
+  --outline-variant: #424750;
+
+  /* shadcn */
+  --background:            #141313;
+  --foreground:            #E5E2E1;
+  --card:                  #252121;
+  --card-foreground:       #E5E2E1;
+  --popover:               #252121;
+  --popover-foreground:    #E5E2E1;
+  --primary:               #A5C8FF;
+  --primary-foreground:    #003667;
+  --secondary:             #252121;
+  --secondary-foreground:  #E5E2E1;
+  --muted:                 #252121;
+  --muted-foreground:      #C2C6D2;
+  --accent:                #3ADFAB;
+  --accent-foreground:     #003667;
+  --destructive:           #FFB4AB;
+  --border:                rgba(194, 198, 210, 0.1);
+  --input:                 rgba(194, 198, 210, 0.08);
+  --ring:                  #A5C8FF;
+}
+
+/* ─── Base ──────────────────────────────────────────────── */
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -108,42 +187,117 @@
   html {
     @apply scroll-smooth;
   }
+
 }
 
-/* ─── Componentes de glassmorphism ─────────────────────── */
+/* ─── Componentes ───────────────────────────────────────── */
 @layer components {
+
+  /* Glassmorphism — modo claro */
   .glass {
-    @apply bg-white/70 backdrop-blur-xl;
+    background: rgba(255, 255, 255, 0.70);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(194, 198, 210, 0.15);
     box-shadow: 0 8px 40px rgba(10, 77, 140, 0.06);
   }
 
+  /* Glassmorphism — modo oscuro */
+  .dark .glass {
+    background: rgba(37, 33, 33, 0.75);
+    border-color: rgba(194, 198, 210, 0.08);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.30);
+  }
+
   .glass-dark {
-    @apply bg-[#003667]/80 backdrop-blur-xl;
+    background: rgba(0, 54, 103, 0.80);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
+  /* Sombras ambientes */
   .ambient-shadow {
     box-shadow: 0 4px 40px rgba(10, 77, 140, 0.08);
+  }
+  .dark .ambient-shadow {
+    box-shadow: 0 4px 40px rgba(0, 0, 0, 0.25);
   }
 
   .ambient-shadow-lg {
     box-shadow: 0 8px 60px rgba(10, 77, 140, 0.12);
   }
+  .dark .ambient-shadow-lg {
+    box-shadow: 0 8px 60px rgba(0, 0, 0, 0.35);
+  }
 
-  /* Mesh gradient hero */
+  /* Mesh gradient hero — modo claro */
   .mesh-gradient {
     background:
-      radial-gradient(ellipse 80% 80% at 20% 20%, rgba(10, 77, 140, 0.12) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 60% at 80% 80%, rgba(0, 200, 150, 0.08) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 50% at 50% 10%, rgba(30, 144, 212, 0.06) 0%, transparent 60%),
-      #FCF9F8;
+      radial-gradient(ellipse 70% 70% at 0%   0%,   rgba(10, 77, 140, 0.14) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 60% at 100% 0%,   rgba(30, 144, 212, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 60% at 0%   100%, rgba(0, 200, 150, 0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 70% at 100% 100%, rgba(0, 108, 79, 0.06) 0%, transparent 60%),
+      var(--surface);
   }
 
+  /* Mesh gradient hero — modo oscuro */
+  .dark .mesh-gradient {
+    background:
+      radial-gradient(ellipse 70% 70% at 0%   0%,   rgba(165, 200, 255, 0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 60% at 100% 0%,   rgba(92, 204, 255, 0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 60% at 0%   100%, rgba(58, 223, 171, 0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 70% at 100% 100%, rgba(0, 200, 150, 0.05) 0%, transparent 60%),
+      var(--surface);
+  }
+
+  /* Mesh gradient dark (sección CTA) */
   .mesh-gradient-dark {
     background:
-      radial-gradient(ellipse 80% 80% at 20% 20%, rgba(10, 77, 140, 0.4) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 60% at 80% 80%, rgba(0, 200, 150, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 70% at 0%   0%,   rgba(165, 200, 255, 0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 60% at 100% 100%, rgba(0, 200, 150, 0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 50%  50%,  rgba(30, 144, 212, 0.10) 0%, transparent 70%),
       #003667;
   }
+
+  /* JetBrains Mono para datos numéricos */
+  .data-mono {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* ─── Dark mode overrides ────────────────────────────────────
+   Fuera de @layer → máxima prioridad en cascada CSS,
+   sobreescribe utilities de Tailwind sin necesitar !important
+────────────────────────────────────────────────────────────── */
+
+/* Titulares: dark-blue hardcodeado → blanco cálido */
+.dark h1, .dark h2, .dark h3,
+.dark h4, .dark h5, .dark h6 {
+  color: var(--on-surface);
+}
+
+/* text-[#003667] (azul muy oscuro) → blanco cálido */
+.dark .text-\[\#003667\] {
+  color: var(--on-surface);
+}
+
+/* text-[#0A4D8C] (azul primario) → primario claro */
+.dark .text-\[\#0A4D8C\] {
+  color: var(--brand-primary);
+}
+
+/* text-[#424750] (gris oscuro) → gris claro */
+.dark .text-\[\#424750\] {
+  color: var(--on-surface-variant);
+}
+
+/* Fondo de tarjetas/inputs claros → superficie oscura */
+.dark .bg-\[\#F6F3F2\] {
+  background-color: var(--surface-container);
+}
+.dark .bg-\[\#F0EDEC\] {
+  background-color: var(--surface-high);
 }
