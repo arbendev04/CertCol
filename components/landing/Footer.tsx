@@ -6,9 +6,9 @@ export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="bg-[#003667] text-white">
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+    <footer className="bg-surface text-on-surface border-t border-outline-variant/20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 sm:gap-12 mb-10 sm:mb-12">
           {/* Marca */}
           <div>
             <Image
@@ -16,9 +16,9 @@ export function Footer() {
               alt="certCol"
               width={180}
               height={54}
-              className="h-[54px] w-auto mb-4 brightness-0 invert"
+              className="h-[54px] w-auto mb-4 dark:brightness-0 dark:invert"
             />
-            <p className="text-white/50 text-sm leading-relaxed max-w-xs">
+            <p className="text-on-surface/50 text-sm leading-relaxed max-w-xs">
               Plataforma profesional para la compra-venta de Certificados de
               Inversión para el Desarrollo en Colombia.
             </p>
@@ -26,7 +26,7 @@ export function Footer() {
 
           {/* Links */}
           <div>
-            <h4 className="font-semibold mb-4 text-white/80">Navegación</h4>
+            <h4 className="font-semibold mb-4 text-on-surface/70">Navegación</h4>
             <ul className="space-y-3">
               {[
                 { href: '#que-es', label: '¿Qué es un CID?' },
@@ -37,7 +37,7 @@ export function Footer() {
                 <li key={href}>
                   <Link
                     href={href}
-                    className="text-sm text-white/50 hover:text-white transition-colors"
+                    className="text-sm text-on-surface/50 hover:text-on-surface transition-colors"
                   >
                     {label}
                   </Link>
@@ -48,7 +48,7 @@ export function Footer() {
 
           {/* Legal y contacto */}
           <div>
-            <h4 className="font-semibold mb-4 text-white/80">Legal & Contacto</h4>
+            <h4 className="font-semibold mb-4 text-on-surface/70">Legal & Contacto</h4>
             <ul className="space-y-3 mb-6">
               {[
                 { href: '/politica-de-datos', label: 'Política de Tratamiento de Datos' },
@@ -57,7 +57,7 @@ export function Footer() {
                 <li key={href}>
                   <Link
                     href={href}
-                    className="text-sm text-white/50 hover:text-white transition-colors"
+                    className="text-sm text-on-surface/50 hover:text-on-surface transition-colors"
                   >
                     {label}
                   </Link>
@@ -66,15 +66,15 @@ export function Footer() {
             </ul>
 
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm text-white/50">
+              <div className="flex items-center gap-2 text-sm text-on-surface/50">
                 <MapPin size={14} />
                 <span>La Estrella, Antioquia — Colombia</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-white/50">
+              <div className="flex items-center gap-2 text-sm text-on-surface/50">
                 <Mail size={14} />
                 <a
                   href="mailto:contacto@certcol.co"
-                  className="hover:text-white transition-colors"
+                  className="hover:text-on-surface transition-colors"
                 >
                   contacto@certcol.co
                 </a>
@@ -84,11 +84,11 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-white/35 text-xs">
+        <div className="pt-8 border-t border-outline-variant/20 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-on-surface/40 text-xs">
             © {year} certCol. Todos los derechos reservados.
           </p>
-          <p className="text-white/35 text-xs text-center">
+          <p className="text-on-surface/40 text-xs text-center">
             Cumplimos con la Ley 1581 de 2012 (Habeas Data) y la normativa colombiana vigente.
           </p>
         </div>

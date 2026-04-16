@@ -128,21 +128,7 @@ export function CertForm() {
   const progress = ((step) / (STEPS.length - 1)) * 100
 
   return (
-    <section id="formulario" className="py-24 bg-surface-low">
-      <div className="max-w-2xl mx-auto px-6">
-
-        {/* Header */}
-        <div className="mb-10 text-center">
-          <p className="text-xs font-semibold text-[#00C896] uppercase tracking-[0.15em] mb-3 font-[family-name:var(--font-mono)]">
-            Registre su certificado
-          </p>
-          <h2 className="text-4xl font-bold text-[#003667] mb-3 tracking-tight">
-            Inicie el proceso de venta
-          </h2>
-          <p className="text-[#424750] leading-relaxed max-w-md mx-auto">
-            Complete los datos de su CID. Nuestro equipo lo contactará en menos de 24 horas.
-          </p>
-        </div>
+    <div>
 
         {/* Indicador de pasos */}
         <div className="mb-8">
@@ -150,38 +136,34 @@ export function CertForm() {
             {STEPS.map((s, i) => (
               <div key={s.label} className="flex items-center gap-2">
                 <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300"
-                  style={{
-                    background: i < step ? '#00C896' : i === step ? '#0A4D8C' : 'rgba(10,77,140,0.1)',
-                    color: i <= step ? '#fff' : '#0A4D8C',
-                  }}
+                  className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+                    i < step ? 'step-dot-done' : i === step ? 'step-dot-current' : 'step-dot-pending'
+                  }`}
                 >
                   {i < step ? <CheckCircle2 size={14} /> : <span className="data-mono">{i + 1}</span>}
                 </div>
                 <span
-                  className="text-xs font-medium hidden sm:block transition-colors duration-300"
-                  style={{ color: i === step ? '#003667' : '#42475080' }}
+                  className={`text-xs font-medium hidden sm:block transition-colors duration-300 ${
+                    i === step ? 'text-on-surface font-semibold' : 'text-[#424750]/50'
+                  }`}
                 >
                   {s.short}
                 </span>
                 {i < STEPS.length - 1 && (
-                  <div className="w-16 sm:w-24 h-px mx-2" style={{ background: i < step ? '#00C896' : 'rgba(10,77,140,0.12)' }} />
+                  <div className={`w-12 sm:w-20 h-px mx-2 ${i < step ? 'step-line-done' : 'step-line-pending'}`} />
                 )}
               </div>
             ))}
           </div>
 
           {/* Barra de progreso */}
-          <div className="h-1 rounded-full bg-[#0A4D8C]/10 overflow-hidden">
+          <div className="h-1 rounded-full bg-on-surface/10 overflow-hidden">
             <div
-              className="h-full rounded-full transition-all duration-500"
-              style={{
-                width: `${step === 0 ? 5 : progress}%`,
-                background: 'linear-gradient(90deg, #0A4D8C, #1E90D4)',
-              }}
+              className="h-full rounded-full transition-all duration-500 progress-bar-fill"
+              style={{ width: `${step === 0 ? 5 : progress}%` }}
             />
           </div>
-          <p className="text-right text-xs text-[#424750]/50 mt-1.5 font-[family-name:var(--font-mono)]">
+          <p className="text-right text-xs text-on-surface-variant/50 mt-1.5 font-[family-name:var(--font-mono)]">
             Paso {step + 1} de {STEPS.length}
           </p>
         </div>
@@ -190,11 +172,7 @@ export function CertForm() {
         <form
           onSubmit={handleSubmit(onSubmit)}
           noValidate
-          className="rounded-2xl p-8 md:p-10 bg-white/65 backdrop-blur-[20px]"
-          style={{
-            border: '1px solid rgba(194, 198, 210, 0.15)',
-            boxShadow: '0 8px 60px rgba(10, 77, 140, 0.08)',
-          }}
+          className="glass rounded-2xl p-6 sm:p-8 md:p-10"
         >
           <h3 className="text-lg font-bold text-[#003667] mb-6">
             {STEPS[step].label}
@@ -356,12 +334,9 @@ export function CertForm() {
                         key={label}
                         type="button"
                         onClick={() => setValue('certificado_emitido', value, { shouldValidate: true })}
-                        className="flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-200"
-                        style={{
-                          background: certificadoEmitido === value ? '#0A4D8C' : '#F6F3F2',
-                          color: certificadoEmitido === value ? '#fff' : '#424750',
-                          boxShadow: certificadoEmitido === value ? '0 4px 20px rgba(10,77,140,0.2)' : 'none',
-                        }}
+                        className={`flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-200 ${
+                          certificadoEmitido === value ? 'toggle-btn-on' : 'toggle-btn-off'
+                        }`}
                       >
                         {label}
                       </button>
@@ -371,7 +346,7 @@ export function CertForm() {
               </div>
 
               {certificadoEmitido === false && (
-                <div className="p-4 rounded-xl" style={{ background: 'rgba(30, 144, 212, 0.05)', border: '1px solid rgba(30, 144, 212, 0.15)' }}>
+                <div className="form-conditional-bg p-4 rounded-xl">
                   <Label htmlFor="fecha_emision" className="font-medium mb-2 block text-sm text-[#003667]">
                     Fecha estimada de emisión <span className="text-red-500">*</span>
                   </Label>
@@ -379,7 +354,7 @@ export function CertForm() {
                     id="fecha_emision"
                     type="date"
                     {...register('fecha_emision')}
-                    className="bg-white border-0 focus-visible:ring-[#1E90D4] h-12 max-w-xs data-mono"
+                    className="bg-surface-container border-0 focus-visible:ring-[#1E90D4] h-12 max-w-xs data-mono"
                   />
                   <HelperText>Fecha aproximada en que se espera emitir</HelperText>
                   <FieldError message={errors.fecha_emision?.message} />
@@ -417,12 +392,9 @@ export function CertForm() {
                         key={label}
                         type="button"
                         onClick={() => setValue('necesita_recursos', value, { shouldValidate: true })}
-                        className="flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-200"
-                        style={{
-                          background: watch('necesita_recursos') === value ? '#0A4D8C' : '#F6F3F2',
-                          color: watch('necesita_recursos') === value ? '#fff' : '#424750',
-                          boxShadow: watch('necesita_recursos') === value ? '0 4px 20px rgba(10,77,140,0.2)' : 'none',
-                        }}
+                        className={`flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-200 ${
+                          watch('necesita_recursos') === value ? 'toggle-btn-on' : 'toggle-btn-off'
+                        }`}
                       >
                         {label}
                       </button>
@@ -487,7 +459,7 @@ export function CertForm() {
               </div>
 
               {/* Habeas Data */}
-              <div className="p-4 rounded-xl bg-[#F6F3F2]">
+              <div className="p-4 rounded-xl bg-surface-low">
                 <div className="flex items-start gap-3">
                   <Checkbox
                     id="habeas_data"
@@ -569,7 +541,6 @@ export function CertForm() {
             </p>
           )}
         </form>
-      </div>
-    </section>
+    </div>
   )
 }

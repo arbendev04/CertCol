@@ -54,8 +54,8 @@ export function CtaSection() {
               <Button
                 render={<Link href="#formulario" />}
                 size="lg"
-                className="bg-[#00C896] hover:bg-[#00b085] text-[#003667] font-bold rounded-xl px-8 h-12 text-base transition-all duration-200 hover:scale-[1.02]"
-                style={{ boxShadow: '0 4px 30px rgba(0, 200, 150, 0.35)' }}
+                className="bg-[#00C896] text-[#003667] hover:text-white font-bold rounded-xl px-8 h-12 text-base transition-colors duration-200"
+                style={{ boxShadow: '0 4px 30px rgba(0,200,150,0.35)' }}
               >
                 Registrar mi CID ahora
                 <ArrowRight size={18} className="ml-2" />
@@ -64,7 +64,7 @@ export function CtaSection() {
                 render={<Link href="#como-funciona" />}
                 variant="outline"
                 size="lg"
-                className="rounded-xl px-8 h-12 font-semibold text-base border-white/20 text-white hover:bg-white/10 transition-all duration-200"
+                className="rounded-xl px-8 h-12 font-semibold text-base border-white/30 text-white hover:text-white !bg-transparent hover:!bg-white/10 transition-colors duration-200"
               >
                 Ver cómo funciona
               </Button>

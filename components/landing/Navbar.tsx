@@ -40,7 +40,7 @@ export function Navbar() {
             alt="certCol"
             width={240}
             height={72}
-            className="h-[72px] w-auto"
+            className="h-10 sm:h-12 md:h-14 w-auto"
             priority
           />
         </Link>
@@ -85,7 +85,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden glass border-t border-outline-variant/20 px-6 pb-6 pt-4">
+        <div className="md:hidden glass border-t border-outline-variant/20 px-4 pb-6 pt-4">
           <nav className="flex flex-col gap-4">
             {navLinks.map((link) => (
               <Link

@@ -268,6 +268,91 @@
   }
 }
 
+/* ─── Step indicator ─────────────────────────────────────── */
+.step-dot-done    { background: #00C896; color: #fff; }
+.step-dot-current { background: #0A4D8C; color: #fff; }
+.step-dot-pending { background: rgba(10,77,140,0.10); color: #0A4D8C; }
+.dark .step-dot-done    { background: var(--brand-secondary); color: #002d20; }
+.dark .step-dot-current { background: var(--brand-primary); color: #003667; }
+.dark .step-dot-pending { background: rgba(165,200,255,0.12); color: var(--brand-primary); }
+
+.step-line-done    { background: #00C896; }
+.step-line-pending { background: rgba(10,77,140,0.12); }
+.dark .step-line-done    { background: var(--brand-secondary); }
+.dark .step-line-pending { background: rgba(165,200,255,0.10); }
+
+/* ─── Toggle button states (sí/no selectors) ─────────────── */
+.toggle-btn-on {
+  background: #0A4D8C;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(10,77,140,0.2);
+}
+.toggle-btn-off {
+  background: var(--surface-low);
+  color: var(--on-surface-variant);
+}
+.dark .toggle-btn-on {
+  background: var(--brand-primary);
+  color: #003667;
+  box-shadow: 0 4px 20px rgba(165,200,255,0.15);
+}
+
+/* ─── Progress bar fill ──────────────────────────────────── */
+.progress-bar-fill { background: linear-gradient(90deg, #0A4D8C, #1E90D4); }
+.dark .progress-bar-fill { background: linear-gradient(90deg, var(--brand-primary), var(--brand-tertiary)); }
+
+/* ─── Icon containers ────────────────────────────────────── */
+.icon-bg-primary   { background-color: rgba(10,77,140,0.08); }
+.icon-bg-secondary { background-color: rgba(0,200,150,0.08); }
+.icon-bg-tertiary  { background-color: rgba(30,144,212,0.08); }
+.dark .icon-bg-primary   { background-color: rgba(165,200,255,0.14); }
+.dark .icon-bg-secondary { background-color: rgba(58,223,171,0.14); }
+.dark .icon-bg-tertiary  { background-color: rgba(146,204,255,0.14); }
+
+/* ─── Icon colors ────────────────────────────────────────── */
+.icon-primary   { color: #0A4D8C; }
+.icon-secondary { color: #00C896; }
+.icon-tertiary  { color: #1E90D4; }
+.dark .icon-primary   { color: var(--brand-primary); }
+.dark .icon-secondary { color: var(--brand-secondary); }
+.dark .icon-tertiary  { color: var(--brand-tertiary); }
+
+/* ─── Gradient text ──────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #0A4D8C 0%, #1E90D4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.dark .gradient-text {
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-tertiary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Form conditional section bg ───────────────────────── */
+.form-conditional-bg {
+  background: rgba(30,144,212,0.05);
+  border: 1px solid rgba(30,144,212,0.15);
+}
+.dark .form-conditional-bg {
+  background: rgba(92,204,255,0.05);
+  border-color: rgba(92,204,255,0.12);
+}
+
+/* ─── Date input dark mode ───────────────────────────────── */
+.dark input[type="date"] {
+  color-scheme: dark;
+  background-color: var(--surface-container);
+  color: var(--on-surface);
+}
+
+/* ─── Card hover lift ────────────────────────────────────── */
+.card-lift { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.card-lift:hover { transform: translateY(-3px); }
+
+
 /* ─── Dark mode overrides ────────────────────────────────────
    Fuera de @layer → máxima prioridad en cascada CSS,
    sobreescribe utilities de Tailwind sin necesitar !important
@@ -300,4 +385,17 @@
 }
 .dark .bg-\[\#F0EDEC\] {
   background-color: var(--surface-high);
+}
+
+/* bg-surface-low en dark */
+.dark .bg-surface-low {
+  background-color: var(--surface-container);
+}
+
+/* Número de paso en dark */
+.dark .text-\[\#424750\]\/50 {
+  color: rgba(194, 198, 210, 0.45);
+}
+.dark .text-\[\#42475080\] {
+  color: rgba(194, 198, 210, 0.45);
 }
