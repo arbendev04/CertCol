@@ -44,11 +44,11 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-10">
           <Image
-            src="/logo.png"
+            src="/img/logo.webp"
             alt="certCol"
             width={140}
             height={42}
-            className="h-10 w-auto mx-auto mb-3"
+            className="h-10 w-auto mx-auto mb-3 dark:brightness-0 dark:invert"
             priority
           />
           <p className="text-on-surface/50 text-sm">Panel administrativo</p>
@@ -103,7 +103,7 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <p className="text-sm text-red-600 bg-red-50 rounded-lg px-4 py-3" role="alert">
+              <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-4 py-3" role="alert">
                 {error}
               </p>
             )}

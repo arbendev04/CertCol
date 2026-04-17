@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { leadServerSchema } from '@/lib/validations/lead.schema'
 import { createClient } from '@/lib/supabase/server'
+import { sendConfirmacionLead, sendNotificacionAdmin } from '@/lib/resend/emails'
 
 // ─── POST /api/leads — Crear un nuevo lead ───────────────
 export async function POST(request: NextRequest) {
@@ -58,8 +59,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // TODO: Enviar correo de confirmación con Resend
-    // await sendConfirmationEmail(data.email_contacto, data.nombre_contacto, lead.id)
+    // Enviar correos en paralelo (sin bloquear la respuesta si fallan)
+    const emailData = {
+      id: lead.id,
+      nombre_contacto: data.nombre_contacto,
+      email_contacto: data.email_contacto,
+      razon_social: data.razon_social,
+      valor_inversion: data.valor_inversion,
+      valor_nominal,
+      porcentaje_min: data.porcentaje_min,
+      porcentaje_max: data.porcentaje_max,
+    }
+
+    Promise.all([
+      sendConfirmacionLead(emailData),
+      sendNotificacionAdmin(emailData),
+    ]).catch((err) => console.error('[leads/POST] Error enviando correos:', err))
 
     return NextResponse.json({ id: lead.id }, { status: 201 })
   } catch (err) {

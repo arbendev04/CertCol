@@ -74,6 +74,7 @@ export function CertForm() {
     formState: { errors },
   } = useForm<LeadFormValues>({
     resolver: zodResolver(leadSchema),
+    mode: 'onTouched',
     defaultValues: {
       condicion_venta: 'contado',
       certificado_emitido: true,

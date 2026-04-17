@@ -62,7 +62,7 @@ export async function PATCH(
 
   const { data: lead, error } = await supabase
     .from('leads')
-    .update(parsed.data)
+    .update({ ...parsed.data, updated_at: new Date().toISOString() })
     .eq('id', id)
     .select()
     .single()
