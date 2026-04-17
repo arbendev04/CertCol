@@ -20,7 +20,7 @@ Se actualiza cada vez que se realiza un cambio significativo en el proyecto.
 
 | Capa | Tecnología |
 |------|-----------|
-| Framework | Next.js 15 (App Router) |
+| Framework | Next.js 16.2.3 (App Router) |
 | Lenguaje | TypeScript |
 | Estilos | Tailwind CSS v4 |
 | Animaciones | Motion (Librería moderna para crear animaciones y gestos interactivos fluidos) |
@@ -74,13 +74,17 @@ certcol-web/
 │   ├── layout.tsx                  # Layout raíz, fuentes, providers
 │   ├── page.tsx                    # Landing page pública
 │   ├── gracias/page.tsx            # Página de confirmación post-formulario
+│   ├── politica-de-datos/page.tsx  # Política de datos (Ley 1581/2012)
+│   ├── terminos/page.tsx           # Términos y condiciones
 │   ├── admin/
-│   │   ├── layout.tsx              # Layout del panel (protegido)
-│   │   ├── page.tsx                # Dashboard principal
-│   │   ├── login/page.tsx          # Login del admin
-│   │   └── leads/
-│   │       └── [id]/page.tsx       # Detalle de un lead
+│   │   ├── (protected)/            # Route group — rutas protegidas por auth
+│   │   │   ├── layout.tsx          # Layout del panel con sidebar (verifica sesión)
+│   │   │   ├── page.tsx            # Dashboard principal
+│   │   │   └── leads/
+│   │   │       └── [id]/page.tsx   # Detalle de un lead
+│   │   └── login/page.tsx          # Login del admin (fuera del layout protegido)
 │   └── api/
+│       ├── auth/signout/route.ts   # POST cerrar sesión
 │       ├── leads/route.ts          # POST crear lead, GET listar leads
 │       └── leads/[id]/route.ts     # GET/PATCH detalle de lead
 ├── components/
@@ -90,24 +94,26 @@ certcol-web/
 │   │   ├── WhatIsACID.tsx          # Educación financiera + bloque cálculo
 │   │   ├── HowItWorks.tsx          # 4 pasos del proceso
 │   │   ├── Benefits.tsx            # Grid de 6 beneficios
-│   │   ├── CtaSection.tsx          # CTA dark con stats (incluido en page.tsx)
-│   │   ├── CertForm.tsx            # Formulario multistep principal (3 pasos)
+│   │   ├── CtaSection.tsx          # CTA dark con stats
+│   │   ├── CertForm.tsx            # Formulario multistep principal (3 pasos, mode: onTouched)
 │   │   └── Footer.tsx              # Footer adaptativo (tema claro/oscuro)
 │   ├── admin/
-│   │   ├── LeadsTable.tsx
-│   │   ├── LeadDetail.tsx
-│   │   └── ExportButton.tsx
+│   │   ├── LeadsTable.tsx          # Tabla con filtros por estado
+│   │   └── ExportButton.tsx        # Export CSV con BOM UTF-8
 │   └── ui/                         # Componentes shadcn/ui + ThemeToggle
 ├── lib/
 │   ├── validations/
-│   │   └── lead.schema.ts          # Esquema Zod del formulario
+│   │   └── lead.schema.ts          # Esquema Zod + validación NIT algoritmo DIAN
 │   ├── supabase/
-│   │   ├── client.ts
-│   │   └── server.ts
+│   │   ├── client.ts               # Cliente browser (@supabase/ssr)
+│   │   └── server.ts               # Cliente server con cookie handling
 │   └── resend/
-│       └── emails.ts
+│       ├── emails.ts               # sendConfirmacionLead + sendNotificacionAdmin
+│       └── templates/
+│           ├── ConfirmacionLead.tsx # Email al lead (React Email)
+│           └── NotificacionAdmin.tsx# Email al admin con link al panel
 ├── types/
-│   └── lead.ts
+│   └── lead.ts                     # Tipos Lead, LeadEstado, ESTADO_LABELS/COLORS
 └── public/
     └── img/                        # logo.webp, favico.webp
 ```
@@ -151,7 +157,26 @@ certcol-web/
 
 ---
 
+## Notas de infraestructura
+
+- **Supabase URL:** `https://nxygjavaxsgwhimlvvzs.supabase.co`
+- **Keys:** formato nuevo `sb_publishable_` / `sb_secret_` (compatible con @supabase/ssr ^0.10)
+- **RLS leads:** política de insert sin `to anon` — el formato nuevo de keys no mapea igual al rol anon
+- **Resend:** modo sandbox — solo envía a `arbendev04@gmail.com`. Cambiar `RESEND_FROM_EMAIL` a `noreply@certcol.co` cuando el dominio esté verificado
+- **Next.js 16:** `middleware.ts` deprecado — usar route groups `(protected)` para protección de rutas en su lugar
+- **Admin auth:** protección vía `app/admin/(protected)/layout.tsx` que llama a `supabase.auth.getUser()` y redirige si no hay sesión
+
+---
+
 ## Historial de cambios
+
+### 2026-04-16 — Supabase, panel admin, Resend y páginas legales (commit f508323)
+- [x] **Supabase:** creada tabla `leads` con todos los campos del modelo, RLS habilitado con política de insert pública (sin `to anon` por incompatibilidad con keys nuevas `sb_publishable_`).
+- [x] **Panel admin:** reestructurado con route group `(protected)` para evitar redirect loop en Next.js 16 (middleware.ts deprecado). Login en `/admin/login` fuera del layout protegido.
+- [x] **Resend:** instalado `@react-email/render`, creadas plantillas `ConfirmacionLead` y `NotificacionAdmin`. Envío paralelo desde `POST /api/leads`. Modo sandbox activo hasta tener dominio.
+- [x] **Formulario:** modo de validación cambiado a `onTouched` para mostrar errores al salir del campo.
+- [x] **Páginas legales:** `/politica-de-datos` (Ley 1581/2012, 8 secciones) y `/terminos` (9 secciones, ley colombiana).
+- [x] **API:** `PATCH /api/leads/[id]` actualiza `updated_at` correctamente.
 
 ### 2026-04-15 — Mejoras UI/UX, dark mode y responsividad (commit f996464)
 - [x] **Dark mode completo en la landing:** todos los componentes ahora usan tokens semánticos (`var(--brand-*)`, `var(--surface-*)`, `var(--on-surface)`) en lugar de hex hardcodeados.
@@ -195,24 +220,21 @@ certcol-web/
 
 ## Pendientes / Roadmap
 
-### Alta prioridad
-- [ ] **Supabase:** crear tabla `leads` según el modelo de datos, configurar RLS (Row Level Security) para que solo admins lean leads, y habilitar la API REST.
-- [ ] **API Routes:** implementar `POST /api/leads` (crear lead) y `GET /api/leads` (listar, solo admin). Esqueleto ya existe en `app/api/leads/route.ts`.
-- [ ] **Panel administrativo:** desarrollar Login (`/admin/login`), Dashboard con tabla de leads (`/admin`) y vista de detalle (`/admin/leads/[id]`). Diseño en Stitch screen `aa68cf37570f477b85a0606c35ad24af`.
-- [ ] **Autenticación admin:** conectar Supabase Auth en el panel — proteger rutas `/admin/*` con middleware de Next.js.
-- [ ] **Correo de confirmación:** configurar Resend + plantilla React Email que se envíe al lead cuando se registra y al admin cuando llega uno nuevo.
+### Completado ✅
+- [x] Tabla `leads` en Supabase con RLS configurado
+- [x] API Routes: `POST /api/leads` y `GET /api/leads` y `GET/PATCH /api/leads/[id]`
+- [x] Panel administrativo: Login, Dashboard, Detalle de lead
+- [x] Autenticación admin con Supabase Auth (route group `(protected)`)
+- [x] Correo de confirmación al lead + notificación al admin (Resend + React Email)
+- [x] Página `/gracias` con diseño completo
+- [x] Páginas legales `/politica-de-datos` y `/terminos`
+- [x] Export CSV con BOM UTF-8 para Excel
 
-### Media prioridad
-- [ ] **Página `/gracias`:** diseñar y desarrollar la página de confirmación post-envío de formulario (ruta ya existe pero sin contenido final).
-- [ ] **Páginas legales:** `/politica-de-datos` y `/terminos` (enlaces ya están en footer y formulario).
-- [ ] **Variables de entorno:** documentar todas las vars requeridas (`NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`) en un `.env.example`.
-- [ ] **Migrar logos:** copiar `certcollogo.png` y `logo_oscuro.png` desde `../Recursos/` a `public/img/` y verificar que el Navbar use la versión correcta según el tema (actualmente usa `logo.webp` genérico en ambos modos).
-
-### Baja prioridad / Nice to have
-- [ ] **Animaciones con Motion:** aprovechar la librería `motion` instalada para animar entrada de secciones al scroll (fade-in, slide-up).
-- [ ] **Export CSV:** botón en el panel admin para exportar leads a CSV (`ExportButton.tsx` ya existe como esqueleto).
+### Pendiente
+- [ ] **Migrar logos:** copiar `certcollogo.png` y `logo_oscuro.png` desde `../Recursos/` a `public/img/` y actualizar Navbar y Footer para usar versión correcta según tema.
+- [ ] **Animaciones con Motion:** animar entrada de secciones al scroll (fade-in, slide-up) usando la librería `motion` ya instalada.
 - [ ] **SEO:** añadir `og:image`, sitemap y robots.txt.
-- [ ] **Dominio:** configurar dominio `.co` o `.com.co` en Vercel.
+- [ ] **Dominio:** configurar dominio `.co` o `.com.co` en Vercel y actualizar `RESEND_FROM_EMAIL` a `noreply@certcol.co`.
 
 ---
 
