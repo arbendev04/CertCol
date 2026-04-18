@@ -1,4 +1,5 @@
 import { Zap, Lock, FileCheck, Headphones, Globe, Scale } from 'lucide-react'
+import { FadeIn } from '@/components/ui/FadeIn'
 
 const benefits = [
   {
@@ -44,7 +45,7 @@ export function Benefits() {
     <section id="beneficios" className="py-20 sm:py-24 bg-surface-container">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Header */}
-        <div className="max-w-2xl mb-12 sm:mb-16">
+        <FadeIn className="max-w-2xl mb-12 sm:mb-16">
           <p className="text-sm font-semibold text-[#00C896] uppercase tracking-widest mb-4">
             Por qué elegirnos
           </p>
@@ -55,13 +56,13 @@ export function Benefits() {
             Diseñamos cada aspecto del proceso para darte la mayor tranquilidad
             y eficiencia al momento de gestionar tu certificado.
           </p>
-        </div>
+        </FadeIn>
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {benefits.map(({ icon: Icon, title, description }) => (
+          {benefits.map(({ icon: Icon, title, description }, i) => (
+            <FadeIn key={title} delay={i * 0.08}>
             <div
-              key={title}
               className="bg-surface-bright rounded-2xl p-8 ambient-shadow card-lift hover:ambient-shadow-lg"
             >
               <div className="w-10 h-10 rounded-lg icon-bg-primary flex items-center justify-center mb-5">
@@ -70,6 +71,7 @@ export function Benefits() {
               <h3 className="text-lg font-bold text-[#003667] mb-3">{title}</h3>
               <p className="text-on-surface/55 text-sm leading-relaxed">{description}</p>
             </div>
+            </FadeIn>
           ))}
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { CertForm } from '@/components/landing/CertForm'
+import { FadeIn } from '@/components/ui/FadeIn'
 
 export function Hero() {
   return (
@@ -22,7 +23,7 @@ export function Hero() {
       <div className="w-full mx-auto px-4 sm:px-6 lg:max-w-4xl lg:px-6 pt-10 lg:pt-14">
 
         {/* Título */}
-        <div className="text-center mb-10">
+        <FadeIn className="text-center mb-10" delay={0.1}>
           <p className="text-xs font-semibold text-[#00C896] uppercase tracking-[0.15em] mb-3 font-[family-name:var(--font-mono)]">
             Plataforma CID · Colombia
           </p>
@@ -36,10 +37,12 @@ export function Hero() {
             Completa el formulario y te contactamos en menos de{' '}
             <strong className="text-[#003667]">24 horas</strong> con una oferta.
           </p>
-        </div>
+        </FadeIn>
 
         {/* Formulario */}
-        <CertForm />
+        <FadeIn delay={0.25}>
+          <CertForm />
+        </FadeIn>
       </div>
     </section>
   )

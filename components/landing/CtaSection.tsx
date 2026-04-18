@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FadeIn } from '@/components/ui/FadeIn'
 
 const features = [
   'Proceso 100% digital, sin papelería',
@@ -28,7 +29,7 @@ export function CtaSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
           {/* Texto */}
-          <div>
+          <FadeIn direction="right">
             <p className="text-xs font-semibold text-[#60FCC6] uppercase tracking-[0.15em] mb-4 font-[family-name:var(--font-mono)]">
               ¿Listo para vender su CID?
             </p>
@@ -69,9 +70,10 @@ export function CtaSection() {
                 Ver cómo funciona
               </Button>
             </div>
-          </div>
+          </FadeIn>
 
           {/* Lista de beneficios */}
+          <FadeIn direction="left" delay={0.15}>
           <div
             className="rounded-2xl p-8 bg-white/[0.065] backdrop-blur-[20px]"
             style={{ border: '1px solid rgba(255,255,255,0.08)' }}
@@ -104,6 +106,7 @@ export function CtaSection() {
               ))}
             </div>
           </div>
+          </FadeIn>
 
         </div>
       </div>

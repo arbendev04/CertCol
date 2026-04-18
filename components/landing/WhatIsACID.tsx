@@ -1,11 +1,12 @@
 import { FileText, Building2, Users, TrendingUp } from 'lucide-react'
+import { FadeIn } from '@/components/ui/FadeIn'
 
 export function WhatIsACID() {
   return (
     <section id="que-es" className="bg-surface-container py-20 sm:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Header */}
-        <div className="max-w-2xl mb-12 sm:mb-16">
+        <FadeIn className="max-w-2xl mb-12 sm:mb-16">
           <p className="text-sm font-semibold text-[#00C896] uppercase tracking-widest mb-4">
             Educación financiera
           </p>
@@ -17,7 +18,7 @@ export function WhatIsACID() {
             de desarrollo social e infraestructura en Colombia. Entender cómo
             funcionan es el primer paso para sacar el mejor provecho de tu inversión.
           </p>
-        </div>
+        </FadeIn>
 
         {/* Grid de conceptos */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
@@ -54,9 +55,9 @@ export function WhatIsACID() {
               bgClass: 'icon-bg-primary',
               iconClass: 'icon-primary',
             },
-          ].map(({ icon: Icon, title, description, bgClass, iconClass }) => (
+          ].map(({ icon: Icon, title, description, bgClass, iconClass }, i) => (
+            <FadeIn key={title} delay={i * 0.1}>
             <div
-              key={title}
               className="bg-surface-bright rounded-2xl p-8 ambient-shadow card-lift hover:ambient-shadow-lg"
             >
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${bgClass}`}>
@@ -65,10 +66,12 @@ export function WhatIsACID() {
               <h3 className="text-xl font-bold text-[#003667] mb-3">{title}</h3>
               <p className="text-on-surface/60 leading-relaxed text-sm">{description}</p>
             </div>
+            </FadeIn>
           ))}
         </div>
 
         {/* Cálculo visual */}
+        <FadeIn delay={0.1}>
         <div className="mesh-gradient-dark rounded-2xl p-6 sm:p-8 md:p-12 text-white">
           <p className="text-[#00C896] text-sm font-semibold uppercase tracking-widest mb-4">
             Ejemplo de cálculo
@@ -118,6 +121,7 @@ export function WhatIsACID() {
             ))}
           </div>
         </div>
+        </FadeIn>
       </div>
     </section>
   )

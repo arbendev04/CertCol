@@ -1,4 +1,5 @@
 import { ClipboardList, Search, MessageSquare, CheckCircle2 } from 'lucide-react'
+import { FadeIn } from '@/components/ui/FadeIn'
 
 const steps = [
   {
@@ -48,7 +49,7 @@ export function HowItWorks() {
     <section id="como-funciona" className="py-20 sm:py-24 bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Header */}
-        <div className="max-w-2xl mb-12 sm:mb-16">
+        <FadeIn className="max-w-2xl mb-12 sm:mb-16">
           <p className="text-sm font-semibold text-[#00C896] uppercase tracking-widest mb-4">
             Proceso simple
           </p>
@@ -59,7 +60,7 @@ export function HowItWorks() {
             Un proceso de cuatro pasos, diseñado para ser claro, rápido y
             completamente transparente para el inversionista.
           </p>
-        </div>
+        </FadeIn>
 
         {/* Pasos */}
         <div className="relative">
@@ -70,8 +71,9 @@ export function HowItWorks() {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {steps.map(({ number, icon: Icon, title, description, color, bgClass, iconClass }) => (
-              <div key={number} className="relative card-lift">
+            {steps.map(({ number, icon: Icon, title, description, color, bgClass, iconClass }, i) => (
+              <FadeIn key={number} delay={i * 0.12}>
+              <div className="relative card-lift">
                 {/* Número de paso */}
                 <div className="flex items-center gap-4 mb-6">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ambient-shadow ${bgClass}`}>
@@ -87,6 +89,7 @@ export function HowItWorks() {
                 <h3 className="text-xl font-bold text-[#003667] mb-3">{title}</h3>
                 <p className="text-on-surface/55 text-sm leading-relaxed">{description}</p>
               </div>
+              </FadeIn>
             ))}
           </div>
         </div>
