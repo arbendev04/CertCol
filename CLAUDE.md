@@ -23,14 +23,14 @@ Se actualiza cada vez que se realiza un cambio significativo en el proyecto.
 | Framework | Next.js 16.2.3 (App Router) |
 | Lenguaje | TypeScript |
 | Estilos | Tailwind CSS v4 |
-| Animaciones | Motion (Librería moderna para crear animaciones y gestos interactivos fluidos) |
+| Animaciones | Motion v12 |
 | Componentes UI | shadcn/ui |
 | Formularios | React Hook Form + Zod |
 | Base de datos | PostgreSQL (Supabase) |
 | Autenticación | Supabase Auth |
 | Correo | Resend + React Email |
 | Hosting | Vercel |
-| Dominio | .co / .com.co |
+| Dominio | .co / .com.co (pendiente) |
 
 ---
 
@@ -71,9 +71,11 @@ Se actualiza cada vez que se realiza un cambio significativo en el proyecto.
 certcol-web/
 ├── app/
 │   ├── globals.css                 # Tokens, dark mode, clases utilitarias propias
-│   ├── layout.tsx                  # Layout raíz, fuentes, providers
-│   ├── page.tsx                    # Landing page pública
-│   ├── gracias/page.tsx            # Página de confirmación post-formulario
+│   ├── layout.tsx                  # Layout raíz, fuentes, providers, metadata SEO, schema JSON-LD
+│   ├── page.tsx                    # Landing page pública + schema FAQ JSON-LD
+│   ├── sitemap.ts                  # Sitemap dinámico (/sitemap.xml)
+│   ├── robots.ts                   # robots.txt — bloquea /admin y /api
+│   ├── gracias/page.tsx            # Página de confirmación post-formulario (noindex)
 │   ├── politica-de-datos/page.tsx  # Política de datos (Ley 1581/2012)
 │   ├── terminos/page.tsx           # Términos y condiciones
 │   ├── admin/
@@ -82,7 +84,9 @@ certcol-web/
 │   │   │   ├── page.tsx            # Dashboard principal
 │   │   │   └── leads/
 │   │   │       └── [id]/page.tsx   # Detalle de un lead
-│   │   └── login/page.tsx          # Login del admin (fuera del layout protegido)
+│   │   └── login/
+│   │       ├── layout.tsx          # noindex para el login
+│   │       └── page.tsx            # Login del admin (fuera del layout protegido)
 │   └── api/
 │       ├── auth/signout/route.ts   # POST cerrar sesión
 │       ├── leads/route.ts          # POST crear lead, GET listar leads
@@ -100,7 +104,9 @@ certcol-web/
 │   ├── admin/
 │   │   ├── LeadsTable.tsx          # Tabla con filtros por estado
 │   │   └── ExportButton.tsx        # Export CSV con BOM UTF-8
-│   └── ui/                         # Componentes shadcn/ui + ThemeToggle
+│   └── ui/
+│       ├── FadeIn.tsx              # Componente de animación reutilizable (Motion v12)
+│       └── ...                     # Componentes shadcn/ui + ThemeToggle
 ├── lib/
 │   ├── validations/
 │   │   └── lead.schema.ts          # Esquema Zod + validación NIT algoritmo DIAN
@@ -115,7 +121,12 @@ certcol-web/
 ├── types/
 │   └── lead.ts                     # Tipos Lead, LeadEstado, ESTADO_LABELS/COLORS
 └── public/
-    └── img/                        # logo.webp, favico.webp
+    └── img/
+        ├── logo-claro.webp         # Logo para fondos claros (modo light)
+        ├── logo-oscuro.webp        # Logo para fondos oscuros (modo dark)
+        ├── favico.webp             # Favicon claro
+        ├── favico-oscuro.webp      # Favicon oscuro
+        └── og.webp                 # OG image (1200×630) para previews en redes
 ```
 
 ---
@@ -165,10 +176,31 @@ certcol-web/
 - **Resend:** modo sandbox — solo envía a `arbendev04@gmail.com`. Cambiar `RESEND_FROM_EMAIL` a `noreply@certcol.co` cuando el dominio esté verificado
 - **Next.js 16:** `middleware.ts` deprecado — usar route groups `(protected)` para protección de rutas en su lugar
 - **Admin auth:** protección vía `app/admin/(protected)/layout.tsx` que llama a `supabase.auth.getUser()` y redirige si no hay sesión
+- **Vercel:** proyecto desplegado y activo. Variables de entorno configuradas en el panel de Vercel.
+- **Resend en Vercel:** `new Resend(key)` debe instanciarse dentro de cada función, NO en el top-level del módulo — de lo contrario el build falla si la env var no está presente.
+- **baseUrl:** usar `||` (no `??`) para el fallback de `NEXT_PUBLIC_APP_URL` — `??` no protege contra strings vacíos y `new URL('')` lanza Invalid URL.
 
 ---
 
 ## Historial de cambios
+
+### 2026-04-18 — Despliegue Vercel, animaciones y SEO
+
+- [x] **Despliegue en Vercel:** proyecto conectado a `arbendev04/CertCol` en GitHub. Variables de entorno configuradas. Deploy exitoso.
+- [x] **Fix Resend build:** `new Resend()` movido dentro de cada función para evitar error de build cuando la env var no existe en tiempo de compilación.
+- [x] **Logos renombrados:** `logo.webp` → `logo-claro.webp`, `cert.webp` → `logo-oscuro.webp`. Actualizadas todas las referencias en Navbar, Footer, admin panel y login.
+- [x] **Logo dark mode en admin:** panel admin y login ahora usan `logo-oscuro.webp` en dark mode (mismo patrón que Navbar).
+- [x] **Animaciones con Motion v12:** componente reutilizable `FadeIn` en `components/ui/FadeIn.tsx`. Aplicado en Hero (título + formulario), WhatIsACID (header + cards + bloque cálculo), HowItWorks (header + pasos escalonados), Benefits (header + cards escalonadas), CtaSection (texto desde derecha, card desde izquierda).
+- [x] **SEO completo:**
+  - Metadata global mejorada: título con keyword principal, description orientada a conversión, `metadataBase`
+  - OG tags completos: `og:image` (`og.webp` 1200×630), `og:url`, `og:siteName`, Twitter card
+  - `sitemap.xml` dinámico (`app/sitemap.ts`) — indexa `/`, `/politica-de-datos`, `/terminos`
+  - `robots.txt` (`app/robots.ts`) — bloquea `/admin`, `/api/`
+  - Schema JSON-LD Organización en layout raíz
+  - Schema JSON-LD FAQPage en landing (4 preguntas)
+  - `noindex` en `/gracias` y `/admin/login`
+  - Canonical tags en páginas legales
+  - Fix `Invalid URL`: cambiado `??` por `||` en `baseUrl` para proteger contra strings vacíos
 
 ### 2026-04-16 — Supabase, panel admin, Resend y páginas legales (commit f508323)
 - [x] **Supabase:** creada tabla `leads` con todos los campos del modelo, RLS habilitado con política de insert pública (sin `to anon` por incompatibilidad con keys nuevas `sb_publishable_`).
@@ -179,42 +211,20 @@ certcol-web/
 - [x] **API:** `PATCH /api/leads/[id]` actualiza `updated_at` correctamente.
 
 ### 2026-04-15 — Mejoras UI/UX, dark mode y responsividad (commit f996464)
-- [x] **Dark mode completo en la landing:** todos los componentes ahora usan tokens semánticos (`var(--brand-*)`, `var(--surface-*)`, `var(--on-surface)`) en lugar de hex hardcodeados.
-- [x] **`globals.css`:** añadidas clases utilitarias propias — `.step-dot-*`, `.step-line-*`, `.toggle-btn-on/off`, `.progress-bar-fill`, `.icon-bg-*`, `.icon-primary/secondary/tertiary`, `.gradient-text`, `.form-conditional-bg`, `.card-lift`. Cada una con su variante `.dark`.
-- [x] **`CertForm.tsx`:** tarjeta del formulario migrada a `.glass` (dark-aware). Step indicator, toggle buttons (Sí/No) y barra de progreso usan las nuevas clases sin inline styles. Input de fecha adaptado al dark mode.
-- [x] **`Hero.tsx`:** título usa `.gradient-text` (adapta colores en dark). Tamaño `text-6xl` en desktop. Contenedor `lg:max-w-4xl` centrado.
-- [x] **`Navbar.tsx`:** logo responsive (`h-10 sm:h-12 md:h-14`) — antes era 72px fijo en todos los tamaños.
-- [x] **`WhatIsACID.tsx`:** iconos usan `.icon-bg-*` + `.icon-*` en lugar de inline styles. Bloque de cálculo migrado a `mesh-gradient-dark` para consistencia. Grid de cálculo `sm:grid-cols-3`.
-- [x] **`HowItWorks.tsx`:** íconos de pasos con clases semánticas. Hover `.card-lift` en cada paso.
-- [x] **`Benefits.tsx`:** iconos con `.icon-bg-primary` + `.icon-primary`. Grid `sm:grid-cols-2` para tablets. `.card-lift` en tarjetas.
-- [x] **`Footer.tsx`:** reescrito completamente — ya no usa `bg-[#003667]`. Ahora usa `bg-surface text-on-surface` (crema en claro, oscuro en dark). Logo invierte solo en dark (`dark:brightness-0 dark:invert`). Todos los textos con tokens semánticos.
-- [x] **`CtaSection.tsx`:** integrada en `page.tsx` (estaba creada pero sin usar). Botón "Ver cómo funciona" corregido con `!bg-transparent` para evitar que `variant="outline"` de shadcn sobrescriba con `bg-background`. Hover de ambos botones simplificado a `hover:text-white`.
-- [x] **Responsividad general:** `px-4 sm:px-6` en todas las secciones. `py-20 sm:py-24`. Headers `text-3xl sm:text-4xl`. Footer `sm:grid-cols-2 md:grid-cols-3`.
+- [x] Dark mode completo en la landing con tokens semánticos.
+- [x] Clases utilitarias propias en `globals.css`.
+- [x] Responsividad general en todas las secciones.
 
 ### 2026-04-09 — Revisión visual y Corrección de Bugs
-- [x] Inicializado proyecto Next.js 15 (App Router).
-- [x] Configuración de Tailwind v4 y componentes base (Base UI / shadcn/ui).
-- [x] Creamos el esquema validado en Zod y React Hook Form (`lead.schema.ts`).
-- [x] Desarrollada la Landing page principal y flujos de confirmación pre-registro.
-- [x] Corrección: Orden de `@import` en `globals.css` para evitar fallo en compilación PostCSS con Tailwind v4.
-- [x] Corrección: Fix en runtime de Zod donde fallaba `.extend()` al extender un objeto previamente refinado.
-- [x] Corrección: Cambio masivo del prop inyectable `asChild` a `render={<Link href="..." />}` tras conflictos con `@base-ui/react`.
-- [x] Agregado: Instalación de `motion` en el proyecto para implementar animaciones y transiciones fluidas.
-- [ ] Pendiente: Migrar logo y recursos gráficos desde `../Recursos` a la nueva estructura de `/public/img`.
+- [x] Inicializado proyecto Next.js 15 → 16 (App Router).
+- [x] Configuración de Tailwind v4 y shadcn/ui.
+- [x] Esquema Zod + React Hook Form (`lead.schema.ts`).
+- [x] Landing page principal desarrollada.
 
 ### 2026-04-08 — Sesión inicial
-- [x] Leídos documentos: `propuesta-certcol.docx` y `stack-tecnologico.docx`
-- [x] Consultado proyecto CertCol en Stitch MCP (ID: `12730165767746243568`)
-- [x] Creada carpeta `certcol-web/`
-- [x] Creado `CLAUDE.md` con arquitectura, design system y modelo de datos
-- [x] Inicializar proyecto Next.js 15
-- [x] Configurar Tailwind v4 + design tokens del sistema Stitch
-- [x] Instalar y configurar shadcn/ui
-- [x] Crear esquema Zod del formulario
-- [x] Desarrollar landing page (Hero, WhatIsACID, HowItWorks, Benefits, Form, Footer)
-- [ ] Desarrollar panel administrativo (Login, Dashboard, Detalle)
-- [ ] Configurar Supabase (cliente + tipos)
-- [ ] Configurar Resend (plantillas de correo)
+- [x] Leídos documentos de propuesta y stack tecnológico.
+- [x] Creada carpeta `certcol-web/` y `CLAUDE.md`.
+- [x] Arquitectura, design system y modelo de datos definidos.
 
 ---
 
@@ -222,42 +232,43 @@ certcol-web/
 
 ### Completado ✅
 - [x] Tabla `leads` en Supabase con RLS configurado
-- [x] API Routes: `POST /api/leads` y `GET /api/leads` y `GET/PATCH /api/leads/[id]`
+- [x] API Routes: `POST /api/leads`, `GET /api/leads`, `GET/PATCH /api/leads/[id]`
 - [x] Panel administrativo: Login, Dashboard, Detalle de lead
 - [x] Autenticación admin con Supabase Auth (route group `(protected)`)
 - [x] Correo de confirmación al lead + notificación al admin (Resend + React Email)
 - [x] Página `/gracias` con diseño completo
 - [x] Páginas legales `/politica-de-datos` y `/terminos`
 - [x] Export CSV con BOM UTF-8 para Excel
+- [x] Despliegue en Vercel
+- [x] Animaciones con Motion (FadeIn al scroll en todas las secciones)
+- [x] SEO: metadata, OG image, sitemap, robots.txt, schema JSON-LD
 
 ### Pendiente
-- [ ] **Migrar logos:** copiar `certcollogo.png` y `logo_oscuro.png` desde `../Recursos/` a `public/img/` y actualizar Navbar y Footer para usar versión correcta según tema.
-- [ ] **Animaciones con Motion:** animar entrada de secciones al scroll (fade-in, slide-up) usando la librería `motion` ya instalada.
-- [ ] **SEO:** añadir `og:image`, sitemap y robots.txt.
-- [ ] **Dominio:** configurar dominio `.co` o `.com.co` en Vercel y actualizar `RESEND_FROM_EMAIL` a `noreply@certcol.co`.
+- [ ] **Dominio:** configurar dominio `.co` o `.com.co` en Vercel y actualizar `RESEND_FROM_EMAIL` a `noreply@certcol.co`. Actualizar `NEXT_PUBLIC_APP_URL` en Vercel con el dominio final.
 
 ---
 
 ## Notas técnicas importantes
 
-- **`variant="outline"` de shadcn/ui** inyecta `bg-background` que en modo claro es el fondo crema. Cuando se usa sobre secciones con fondo oscuro (como `CtaSection` con `mesh-gradient-dark`), hay que forzar `!bg-transparent` en el className del botón.
-- **Inline styles no respetan dark mode.** Evitar `style={{ color: '#003667' }}` — usar clases CSS con variante `.dark` en `globals.css` o tokens semánticos de Tailwind (`text-on-surface`, `bg-surface-low`, etc.).
-- **`mesh-gradient-dark`** es siempre azul oscuro independientemente del tema — no varía con light/dark. Usarlo solo en secciones que deben ser siempre oscuras (CTA, bloques de énfasis).
-- **Fuente monoespaciada para números:** usar la clase `.data-mono` (JetBrains Mono, tabular-nums) en inputs y displays de valores financieros.
+- **`variant="outline"` de shadcn/ui** inyecta `bg-background`. Sobre fondos oscuros usar `!bg-transparent`.
+- **Inline styles no respetan dark mode.** Usar clases CSS con variante `.dark` en `globals.css` o tokens semánticos de Tailwind.
+- **`mesh-gradient-dark`** es siempre azul oscuro — no varía con light/dark. Solo para secciones permanentemente oscuras.
+- **Fuente monoespaciada para números:** clase `.data-mono` (JetBrains Mono, tabular-nums).
+- **`new Resend(key)` debe ir dentro de cada función**, no en el top-level del módulo.
+- **`baseUrl` con `||`**, no `??` — protege contra strings vacíos en env vars de Vercel.
+- **Logos:** siempre usar dos `<Image>` con `block dark:hidden` / `hidden dark:block` — no usar `dark:brightness-0 dark:invert` sobre logos de color.
 
 ---
 
-## Assets disponibles
+## Assets en `public/img/`
 
-Ubicados en `../Recursos/`:
-- `certcollogo.png` — logo principal (para fondos claros)
-- `logo_oscuro.png` — logo para fondos oscuros
-- `favico.png` — favicon claro
-- `favico_oscuro.png` — favicon oscuro
-
-En `public/img/` (convertidos a WebP):
-- `logo.webp` — logo actualmente en uso (Navbar y Footer)
-- `favico.webp` — favicon actualmente en uso
+| Archivo | Uso |
+|---------|-----|
+| `logo-claro.webp` | Logo modo light (Navbar, Footer, admin) |
+| `logo-oscuro.webp` | Logo modo dark (Navbar, Footer, admin) |
+| `favico.webp` | Favicon claro |
+| `favico-oscuro.webp` | Favicon oscuro |
+| `og.webp` | OG image 1200×630 para redes sociales |
 
 ---
 
@@ -268,3 +279,5 @@ En `public/img/` (convertidos a WebP):
 - Diseño Stitch: proyecto ID `12730165767746243568`
   - Landing: screen `6b9136dbe4664889b660a63ad6f1903e`
   - Admin Panel: screen `aa68cf37570f477b85a0606c35ad24af`
+- Repositorio: `https://github.com/arbendev04/CertCol`
+- Deploy: Vercel (conectado a rama `main`)
