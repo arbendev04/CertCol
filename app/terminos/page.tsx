@@ -5,8 +5,12 @@ import { Footer } from '@/components/landing/Footer'
 import { ArrowLeft } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Términos y Condiciones — certCol',
-  description: 'Términos y condiciones de uso de la plataforma certCol.',
+  title: 'Términos y Condiciones de Uso',
+  description:
+    'Términos y condiciones de uso de la plataforma certCol para la compraventa de Certificados de Inversión para el Desarrollo en Colombia.',
+  alternates: {
+    canonical: '/terminos',
+  },
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {

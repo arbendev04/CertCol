@@ -5,8 +5,12 @@ import { Footer } from '@/components/landing/Footer'
 import { ArrowLeft } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Política de Tratamiento de Datos — certCol',
-  description: 'Política de tratamiento de datos personales de certCol conforme a la Ley 1581 de 2012.',
+  title: 'Política de Tratamiento de Datos Personales',
+  description:
+    'Política de tratamiento de datos personales de certCol conforme a la Ley 1581 de 2012 de Colombia. Conozca cómo protegemos su información.',
+  alternates: {
+    canonical: '/politica-de-datos',
+  },
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
