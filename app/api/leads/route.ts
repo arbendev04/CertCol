@@ -1,11 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
 import { leadServerSchema } from '@/lib/validations/lead.schema'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { sendConfirmacionLead, sendNotificacionAdmin } from '@/lib/resend/emails'
 
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, '10 m'),
+  analytics: true,
+})
+
 // ─── POST /api/leads — Crear un nuevo lead ───────────────
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'anonymous'
+    const { success } = await ratelimit.limit(ip)
+    if (!success) {
+      return NextResponse.json(
+        { message: 'Demasiados intentos. Por favor espera unos minutos e intenta de nuevo.' },
+        { status: 429 }
+      )
+    }
+
     const body = await request.json()
 
     // Validación con Zod en el servidor
