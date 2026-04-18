@@ -2,10 +2,9 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, X } from 'lucide-react'
 import type { Lead } from '@/types/lead'
 import { ESTADO_LABELS, ESTADO_COLORS } from '@/types/lead'
-import { Badge } from '@/components/ui/badge'
 
 function formatCOP(value: number) {
   return new Intl.NumberFormat('es-CO', {
@@ -25,31 +24,159 @@ function formatDate(iso: string) {
 
 const ESTADOS = ['todos', 'nuevo', 'contactado', 'en_proceso', 'aprobado', 'rechazado'] as const
 
-export function LeadsTable({ leads }: { leads: Lead[] }) {
-  const [filtro, setFiltro] = useState<string>('todos')
+interface Filtros {
+  estado: string
+  fechaDesde: string
+  fechaHasta: string
+  valorMin: string
+  valorMax: string
+}
 
-  const filtered = filtro === 'todos' ? leads : leads.filter((l) => l.estado === filtro)
+const FILTROS_INICIAL: Filtros = {
+  estado: 'todos',
+  fechaDesde: '',
+  fechaHasta: '',
+  valorMin: '',
+  valorMax: '',
+}
+
+export function LeadsTable({ leads }: { leads: Lead[] }) {
+  const [filtros, setFiltros] = useState<Filtros>(FILTROS_INICIAL)
+
+  const set = (key: keyof Filtros, value: string) =>
+    setFiltros((prev) => ({ ...prev, [key]: value }))
+
+  const limpiar = () => setFiltros(FILTROS_INICIAL)
+
+  const hayFiltrosActivos =
+    filtros.estado !== 'todos' ||
+    filtros.fechaDesde !== '' ||
+    filtros.fechaHasta !== '' ||
+    filtros.valorMin !== '' ||
+    filtros.valorMax !== ''
+
+  const filtered = leads.filter((lead) => {
+    if (filtros.estado !== 'todos' && lead.estado !== filtros.estado) return false
+
+    const fechaLead = new Date(lead.created_at)
+    if (filtros.fechaDesde) {
+      const desde = new Date(filtros.fechaDesde)
+      desde.setHours(0, 0, 0, 0)
+      if (fechaLead < desde) return false
+    }
+    if (filtros.fechaHasta) {
+      const hasta = new Date(filtros.fechaHasta)
+      hasta.setHours(23, 59, 59, 999)
+      if (fechaLead > hasta) return false
+    }
+
+    if (filtros.valorMin && lead.valor_inversion < Number(filtros.valorMin)) return false
+    if (filtros.valorMax && lead.valor_inversion > Number(filtros.valorMax)) return false
+
+    return true
+  })
 
   return (
     <div className="bg-surface-bright rounded-2xl ambient-shadow overflow-hidden">
-      {/* Filtros por estado */}
-      <div className="px-6 py-4 border-b border-surface-container flex flex-wrap gap-2">
-        {ESTADOS.map((estado) => (
-          <button
-            key={estado}
-            onClick={() => setFiltro(estado)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
-              filtro === estado
-                ? 'bg-[#0A4D8C] text-white'
-                : 'bg-surface-container text-on-surface/60 hover:bg-surface-high'
-            }`}
-          >
-            {estado === 'todos' ? 'Todos' : ESTADO_LABELS[estado as keyof typeof ESTADO_LABELS]}
-            {estado === 'todos' && (
-              <span className="ml-2 opacity-60">({leads.length})</span>
-            )}
-          </button>
-        ))}
+      {/* Filtros */}
+      <div className="px-6 py-4 border-b border-surface-container space-y-4">
+
+        {/* Fila 1 — Estado */}
+        <div className="flex flex-wrap gap-2">
+          {ESTADOS.map((estado) => (
+            <button
+              key={estado}
+              onClick={() => set('estado', estado)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                filtros.estado === estado
+                  ? 'bg-[#0A4D8C] text-white'
+                  : 'bg-surface-container text-on-surface/60 hover:bg-surface-high'
+              }`}
+            >
+              {estado === 'todos' ? 'Todos' : ESTADO_LABELS[estado as keyof typeof ESTADO_LABELS]}
+              {estado === 'todos' && (
+                <span className="ml-2 opacity-60">({leads.length})</span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Fila 2 — Fecha y precio */}
+        <div className="flex flex-wrap gap-3 items-end">
+
+          {/* Fecha desde */}
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-on-surface/40 uppercase tracking-widest">
+              Desde
+            </label>
+            <input
+              type="date"
+              value={filtros.fechaDesde}
+              onChange={(e) => set('fechaDesde', e.target.value)}
+              className="px-3 py-1.5 rounded-lg border border-surface-container bg-surface-container text-sm text-on-surface focus:outline-none focus:border-[#0A4D8C] transition-colors"
+            />
+          </div>
+
+          {/* Fecha hasta */}
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-on-surface/40 uppercase tracking-widest">
+              Hasta
+            </label>
+            <input
+              type="date"
+              value={filtros.fechaHasta}
+              onChange={(e) => set('fechaHasta', e.target.value)}
+              className="px-3 py-1.5 rounded-lg border border-surface-container bg-surface-container text-sm text-on-surface focus:outline-none focus:border-[#0A4D8C] transition-colors"
+            />
+          </div>
+
+          {/* Separador visual */}
+          <div className="h-8 w-px bg-surface-container hidden sm:block" />
+
+          {/* Valor mínimo */}
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-on-surface/40 uppercase tracking-widest">
+              Valor mín. inversión
+            </label>
+            <input
+              type="number"
+              placeholder="$ 0"
+              value={filtros.valorMin}
+              onChange={(e) => set('valorMin', e.target.value)}
+              className="px-3 py-1.5 rounded-lg border border-surface-container bg-surface-container text-sm text-on-surface focus:outline-none focus:border-[#0A4D8C] transition-colors w-40"
+            />
+          </div>
+
+          {/* Valor máximo */}
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-on-surface/40 uppercase tracking-widest">
+              Valor máx. inversión
+            </label>
+            <input
+              type="number"
+              placeholder="$ ∞"
+              value={filtros.valorMax}
+              onChange={(e) => set('valorMax', e.target.value)}
+              className="px-3 py-1.5 rounded-lg border border-surface-container bg-surface-container text-sm text-on-surface focus:outline-none focus:border-[#0A4D8C] transition-colors w-40"
+            />
+          </div>
+
+          {/* Botón limpiar */}
+          {hayFiltrosActivos && (
+            <button
+              onClick={limpiar}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-on-surface/60 hover:text-on-surface bg-surface-container hover:bg-surface-high transition-colors"
+            >
+              <X size={14} />
+              Limpiar
+            </button>
+          )}
+
+          {/* Contador de resultados */}
+          <span className="text-sm text-on-surface/40 ml-auto self-end">
+            {filtered.length} de {leads.length} solicitudes
+          </span>
+        </div>
       </div>
 
       {/* Tabla */}
@@ -73,7 +200,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
             {filtered.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-6 py-16 text-center text-on-surface/40">
-                  No hay solicitudes con este estado
+                  No hay solicitudes con estos filtros
                 </td>
               </tr>
             ) : (
