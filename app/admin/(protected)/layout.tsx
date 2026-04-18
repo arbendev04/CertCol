@@ -31,7 +31,14 @@ export default async function AdminLayout({
               alt="certCol"
               width={130}
               height={40}
-              className="h-9 w-auto dark:brightness-0 dark:invert"
+              className="h-9 w-auto block dark:hidden"
+            />
+            <Image
+              src="/img/cert.webp"
+              alt="certCol"
+              width={130}
+              height={40}
+              className="h-9 w-auto hidden dark:block"
             />
             <span className="text-[10px] font-semibold text-on-surface-variant/50 bg-surface-container px-2 py-0.5 rounded-full font-[family-name:var(--font-mono)] uppercase tracking-wider">
               Admin

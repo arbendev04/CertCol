@@ -48,7 +48,15 @@ export default function LoginPage() {
             alt="certCol"
             width={140}
             height={42}
-            className="h-10 w-auto mx-auto mb-3 dark:brightness-0 dark:invert"
+            className="h-10 w-auto mx-auto mb-3 block dark:hidden"
+            priority
+          />
+          <Image
+            src="/img/cert.webp"
+            alt="certCol"
+            width={140}
+            height={42}
+            className="h-10 w-auto mx-auto mb-3 hidden dark:block"
             priority
           />
           <p className="text-on-surface/50 text-sm">Panel administrativo</p>
