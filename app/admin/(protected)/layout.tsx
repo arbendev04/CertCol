@@ -1,12 +1,7 @@
 import { redirect } from 'next/navigation'
-import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/server'
+import { SidebarWrapper } from '@/components/admin/SidebarWrapper'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
-
-const Sidebar = dynamic(
-  () => import('@/components/admin/Sidebar').then((m) => m.Sidebar),
-  { ssr: false }
-)
 
 export default async function AdminLayout({
   children,
@@ -23,7 +18,7 @@ export default async function AdminLayout({
   return (
     <div className="min-h-dvh bg-surface-container flex">
 
-      <Sidebar userEmail={user.email ?? ''} />
+      <SidebarWrapper userEmail={user.email ?? ''} />
 
       {/* ── Contenido principal ── */}
       <div className="flex-1 flex flex-col min-w-0">
