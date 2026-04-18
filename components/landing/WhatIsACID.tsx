@@ -50,7 +50,7 @@ export function WhatIsACID() {
               icon: Users,
               title: '¿Cómo se venden?',
               description:
-                'El titular puede vender su CID con un descuento sobre el valor nominal. El porcentaje máximo de descuento permitido es del 39% del valor nominal.',
+                'El titular puede vender su CID con un descuento sobre el valor nominal. El porcentaje máximo de descuento permitido es del 57% del valor nominal.',
               bgClass: 'icon-bg-primary',
               iconClass: 'icon-primary',
             },
@@ -92,8 +92,8 @@ export function WhatIsACID() {
               },
               {
                 label: 'Mínimo a recibir',
-                value: '$10.065.000',
-                sub: 'Vendiendo al 39% de descuento',
+                value: '$7.095.000',
+                sub: 'Vendiendo al 57% de descuento',
                 accent: false,
               },
             ].map(({ label, value, sub, accent }) => (

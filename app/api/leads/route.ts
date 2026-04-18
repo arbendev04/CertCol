@@ -64,6 +64,7 @@ export async function POST(request: NextRequest) {
       id: lead.id,
       nombre_contacto: data.nombre_contacto,
       email_contacto: data.email_contacto,
+      telefono_contacto: data.telefono_contacto ?? undefined,
       razon_social: data.razon_social,
       valor_inversion: data.valor_inversion,
       valor_nominal,

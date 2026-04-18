@@ -1,29 +1,5 @@
 import { z } from 'zod'
 
-// ─── Validación NIT colombiano (algoritmo DIAN) ───────────
-function validarNIT(nit: string): boolean {
-  // Acepta formatos: "123456789-1" o "1234567891"
-  const clean = nit.replace(/[\s.-]/g, '')
-  if (!/^\d{9,10}$/.test(clean)) return false
-
-  const digits = clean.padStart(10, '0')
-  const primes = [71, 67, 59, 53, 47, 43, 41, 37, 29, 23, 19, 17, 13, 7, 3]
-  const nitDigits = digits.slice(0, 9).split('').map(Number)
-
-  // El dígito de verificación es el último dígito
-  const checkDigit = parseInt(digits[9])
-
-  const sum = nitDigits.reduce(
-    (acc, d, i) => acc + d * primes[primes.length - 9 + i],
-    0
-  )
-
-  const remainder = sum % 11
-  const expected = remainder < 2 ? remainder : 11 - remainder
-
-  return expected === checkDigit
-}
-
 // ─── Esquema principal del formulario ────────────────────
 export const leadSchema = z
   .object({
@@ -42,20 +18,17 @@ export const leadSchema = z
     porcentaje_min: z
       .number({ message: 'El porcentaje mínimo es obligatorio' })
       .min(0, 'Debe ser mayor o igual a 0')
-      .max(39, 'El porcentaje no puede superar el 39%'),
+      .max(57, 'El porcentaje no puede superar el 57%'),
 
     porcentaje_max: z
       .number({ message: 'El porcentaje máximo es obligatorio' })
       .min(0, 'Debe ser mayor o igual a 0')
-      .max(39, 'El porcentaje no puede superar el 39%'),
+      .max(57, 'El porcentaje no puede superar el 57%'),
 
     // Datos de validación del título
     nit: z
       .string({ message: 'El NIT es obligatorio' })
-      .min(1, 'El NIT es obligatorio')
-      .refine(validarNIT, {
-        message: 'El NIT no es válido. Verifique el dígito de verificación.',
-      }),
+      .min(1, 'El NIT es obligatorio'),
 
     razon_social: z
       .string({ message: 'La razón social es obligatoria' })
@@ -66,7 +39,7 @@ export const leadSchema = z
       .number({ message: 'El año de inversión es obligatorio' })
       .int('Debe ser un año entero')
       .min(2000, 'El año debe ser posterior al 2000')
-      .max(new Date().getFullYear(), 'El año no puede ser futuro'),
+      .max(new Date().getFullYear() + 10, `El año no puede ser mayor a ${new Date().getFullYear() + 10}`),
 
     nombre_proyecto: z
       .string({ message: 'El nombre del proyecto es obligatorio' })

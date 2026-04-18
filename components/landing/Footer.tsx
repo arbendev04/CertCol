@@ -16,7 +16,14 @@ export function Footer() {
               alt="certCol"
               width={180}
               height={54}
-              className="h-[54px] w-auto mb-4 dark:brightness-0 dark:invert"
+              className="h-[54px] w-auto mb-4 block dark:hidden"
+            />
+            <Image
+              src="/img/cert.webp"
+              alt="certCol"
+              width={180}
+              height={54}
+              className="h-[54px] w-auto mb-4 hidden dark:block"
             />
             <p className="text-on-surface/50 text-sm leading-relaxed max-w-xs">
               Plataforma profesional para la compra-venta de Certificados de
@@ -68,7 +75,7 @@ export function Footer() {
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-on-surface/50">
                 <MapPin size={14} />
-                <span>La Estrella, Antioquia — Colombia</span>
+                <span>Medellín, Antioquia — Colombia</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-on-surface/50">
                 <Mail size={14} />

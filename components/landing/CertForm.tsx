@@ -230,7 +230,7 @@ export function CertForm() {
                     <Input
                       id="porcentaje_min"
                       type="number"
-                      min={0} max={39} step={0.5}
+                      min={0} max={57} step={0.5}
                       placeholder="Ej: 25"
                       {...register('porcentaje_min', { valueAsNumber: true })}
                       className="bg-[#F6F3F2] border-0 focus-visible:ring-[#0A4D8C] h-12 pr-10 data-mono"
@@ -248,14 +248,14 @@ export function CertForm() {
                     <Input
                       id="porcentaje_max"
                       type="number"
-                      min={0} max={39} step={0.5}
-                      placeholder="Máx. 39"
+                      min={0} max={57} step={0.5}
+                      placeholder="Máx. 57"
                       {...register('porcentaje_max', { valueAsNumber: true })}
                       className="bg-[#F6F3F2] border-0 focus-visible:ring-[#0A4D8C] h-12 pr-10 data-mono"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#424750]/40 text-sm font-medium data-mono">%</span>
                   </div>
-                  <HelperText>Tope legal máximo: 39%</HelperText>
+                  <HelperText>Tope legal máximo: 57%</HelperText>
                   <FieldError message={errors.porcentaje_max?.message} />
                 </div>
               </div>

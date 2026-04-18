@@ -11,6 +11,7 @@ interface LeadEmailData {
   id: string
   nombre_contacto: string
   email_contacto: string
+  telefono_contacto?: string
   razon_social: string
   valor_inversion: number
   valor_nominal: number

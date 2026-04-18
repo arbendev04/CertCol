@@ -94,7 +94,7 @@ export function CtaSection() {
             >
               {[
                 { value: '165%', label: 'Valor nominal' },
-                { value: '39%', label: 'Tope máx. venta' },
+                { value: '57%', label: 'Tope máx. venta' },
                 { value: '24h', label: 'Tiempo respuesta' },
               ].map(({ value, label }) => (
                 <div key={label} className="text-center">

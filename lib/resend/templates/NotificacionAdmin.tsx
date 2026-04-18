@@ -16,6 +16,7 @@ interface Props {
     id: string
     nombre_contacto: string
     email_contacto: string
+    telefono_contacto?: string
     razon_social: string
     valor_inversion: number
     valor_nominal: number
@@ -57,6 +58,7 @@ export function NotificacionAdmin({ data }: Props) {
                 { label: 'Rango de venta', val: `${data.porcentaje_min}% – ${data.porcentaje_max}%` },
                 { label: 'Contacto', val: data.nombre_contacto },
                 { label: 'Email', val: data.email_contacto },
+                ...(data.telefono_contacto ? [{ label: 'Celular', val: data.telefono_contacto }] : []),
               ].map(({ label, val, highlight }) => (
                 <Row key={label}>
                   <Column style={labelCol}>
