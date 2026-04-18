@@ -117,7 +117,7 @@ export function CertForm() {
         const err = await res.json()
         throw new Error(err.message || 'Error al enviar el formulario')
       }
-      router.push('/gracias')
+      window.location.href = '/gracias'
     } catch (err) {
       console.error(err)
       alert('Ocurrió un error al enviar su solicitud. Por favor intente nuevamente.')
