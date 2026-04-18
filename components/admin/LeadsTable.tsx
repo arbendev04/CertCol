@@ -78,16 +78,16 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
 
   return (
     <div className="bg-surface-bright rounded-2xl ambient-shadow overflow-hidden">
-      {/* Filtros */}
-      <div className="px-6 py-4 border-b border-surface-container space-y-4">
+      {/* ── Filtros ── */}
+      <div className="px-4 lg:px-6 py-4 border-b border-surface-container space-y-3">
 
-        {/* Fila 1 — Estado */}
+        {/* Estado */}
         <div className="flex flex-wrap gap-2">
           {ESTADOS.map((estado) => (
             <button
               key={estado}
               onClick={() => set('estado', estado)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
                 filtros.estado === estado
                   ? 'bg-[#0A4D8C] text-white'
                   : 'bg-surface-container text-on-surface/60 hover:bg-surface-high'
@@ -95,92 +95,125 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
             >
               {estado === 'todos' ? 'Todos' : ESTADO_LABELS[estado as keyof typeof ESTADO_LABELS]}
               {estado === 'todos' && (
-                <span className="ml-2 opacity-60">({leads.length})</span>
+                <span className="ml-1.5 opacity-60">({leads.length})</span>
               )}
             </button>
           ))}
         </div>
 
-        {/* Fila 2 — Fecha y precio */}
-        <div className="flex flex-wrap gap-3 items-end">
+        {/* Fecha y precio */}
+        <div className="grid grid-cols-2 lg:flex lg:flex-wrap gap-2 lg:gap-3 items-end">
 
-          {/* Fecha desde */}
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold text-on-surface/40 uppercase tracking-widest">
+            <label className="text-[10px] font-semibold text-on-surface/40 uppercase tracking-widest">
               Desde
             </label>
             <input
               type="date"
               value={filtros.fechaDesde}
               onChange={(e) => set('fechaDesde', e.target.value)}
-              className="px-3 py-1.5 rounded-lg border border-surface-container bg-surface-container text-sm text-on-surface focus:outline-none focus:border-[#0A4D8C] transition-colors"
+              className="px-2.5 py-1.5 rounded-lg border border-surface-container bg-surface-container text-xs text-on-surface focus:outline-none focus:border-[#0A4D8C] transition-colors w-full"
             />
           </div>
 
-          {/* Fecha hasta */}
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold text-on-surface/40 uppercase tracking-widest">
+            <label className="text-[10px] font-semibold text-on-surface/40 uppercase tracking-widest">
               Hasta
             </label>
             <input
               type="date"
               value={filtros.fechaHasta}
               onChange={(e) => set('fechaHasta', e.target.value)}
-              className="px-3 py-1.5 rounded-lg border border-surface-container bg-surface-container text-sm text-on-surface focus:outline-none focus:border-[#0A4D8C] transition-colors"
+              className="px-2.5 py-1.5 rounded-lg border border-surface-container bg-surface-container text-xs text-on-surface focus:outline-none focus:border-[#0A4D8C] transition-colors w-full"
             />
           </div>
 
-          {/* Separador visual */}
-          <div className="h-8 w-px bg-surface-container hidden sm:block" />
-
-          {/* Valor mínimo */}
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold text-on-surface/40 uppercase tracking-widest">
-              Valor mín. inversión
+            <label className="text-[10px] font-semibold text-on-surface/40 uppercase tracking-widest">
+              Valor mín.
             </label>
             <input
               type="number"
               placeholder="$ 0"
               value={filtros.valorMin}
               onChange={(e) => set('valorMin', e.target.value)}
-              className="px-3 py-1.5 rounded-lg border border-surface-container bg-surface-container text-sm text-on-surface focus:outline-none focus:border-[#0A4D8C] transition-colors w-40"
+              className="px-2.5 py-1.5 rounded-lg border border-surface-container bg-surface-container text-xs text-on-surface focus:outline-none focus:border-[#0A4D8C] transition-colors w-full lg:w-36"
             />
           </div>
 
-          {/* Valor máximo */}
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold text-on-surface/40 uppercase tracking-widest">
-              Valor máx. inversión
+            <label className="text-[10px] font-semibold text-on-surface/40 uppercase tracking-widest">
+              Valor máx.
             </label>
             <input
               type="number"
               placeholder="$ ∞"
               value={filtros.valorMax}
               onChange={(e) => set('valorMax', e.target.value)}
-              className="px-3 py-1.5 rounded-lg border border-surface-container bg-surface-container text-sm text-on-surface focus:outline-none focus:border-[#0A4D8C] transition-colors w-40"
+              className="px-2.5 py-1.5 rounded-lg border border-surface-container bg-surface-container text-xs text-on-surface focus:outline-none focus:border-[#0A4D8C] transition-colors w-full lg:w-36"
             />
           </div>
 
-          {/* Botón limpiar */}
-          {hayFiltrosActivos && (
-            <button
-              onClick={limpiar}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-on-surface/60 hover:text-on-surface bg-surface-container hover:bg-surface-high transition-colors"
-            >
-              <X size={14} />
-              Limpiar
-            </button>
-          )}
-
-          {/* Contador de resultados */}
-          <span className="text-sm text-on-surface/40 ml-auto self-end">
-            {filtered.length} de {leads.length} solicitudes
-          </span>
+          <div className="col-span-2 lg:col-span-1 flex items-end justify-between lg:justify-start gap-3 lg:ml-auto">
+            {hayFiltrosActivos && (
+              <button
+                onClick={limpiar}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-on-surface/60 hover:text-on-surface bg-surface-container hover:bg-surface-high transition-colors"
+              >
+                <X size={12} />
+                Limpiar
+              </button>
+            )}
+            <span className="text-xs text-on-surface/40">
+              {filtered.length} de {leads.length}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Tabla */}
-      <div className="overflow-x-auto">
+      {/* ── Vista mobile: cards ── */}
+      <div className="lg:hidden divide-y divide-surface-container">
+        {filtered.length === 0 ? (
+          <p className="px-4 py-12 text-center text-sm text-on-surface/40">
+            No hay solicitudes con estos filtros
+          </p>
+        ) : (
+          filtered.map((lead) => (
+            <Link
+              key={lead.id}
+              href={`/admin/leads/${lead.id}`}
+              className="block px-4 py-4 hover:bg-surface-low transition-colors"
+            >
+              <div className="flex items-start justify-between gap-3 mb-2">
+                <div className="min-w-0">
+                  <p className="font-semibold text-[#003667] truncate text-sm">{lead.razon_social}</p>
+                  <p className="text-xs text-on-surface/40">{lead.nit}</p>
+                </div>
+                <span className={`shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${ESTADO_COLORS[lead.estado]}`}>
+                  {ESTADO_LABELS[lead.estado]}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-on-surface/40">Inversión</p>
+                  <p className="text-sm font-medium text-on-surface">{formatCOP(lead.valor_inversion)}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-on-surface/40">Nominal</p>
+                  <p className="text-sm font-bold text-[#0A4D8C]">{formatCOP(lead.valor_nominal)}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-on-surface/40">Fecha</p>
+                  <p className="text-xs text-on-surface/60">{formatDate(lead.created_at)}</p>
+                </div>
+              </div>
+            </Link>
+          ))
+        )}
+      </div>
+
+      {/* ── Vista desktop: tabla ── */}
+      <div className="hidden lg:block overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-surface-container">
