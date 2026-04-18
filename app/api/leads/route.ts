@@ -5,22 +5,29 @@ import { leadServerSchema } from '@/lib/validations/lead.schema'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { sendConfirmacionLead, sendNotificacionAdmin } from '@/lib/resend/emails'
 
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(5, '10 m'),
-  analytics: true,
-})
+let ratelimit: Ratelimit | null = null
+try {
+  ratelimit = new Ratelimit({
+    redis: Redis.fromEnv(),
+    limiter: Ratelimit.slidingWindow(5, '10 m'),
+    analytics: true,
+  })
+} catch {
+  // Si Redis no está configurado, el rate limiting se deshabilita (fail-open)
+}
 
 // ─── POST /api/leads — Crear un nuevo lead ───────────────
 export async function POST(request: NextRequest) {
   try {
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'anonymous'
-    const { success } = await ratelimit.limit(ip)
-    if (!success) {
-      return NextResponse.json(
-        { message: 'Demasiados intentos. Por favor espera unos minutos e intenta de nuevo.' },
-        { status: 429 }
-      )
+    if (ratelimit) {
+      const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'anonymous'
+      const { success } = await ratelimit.limit(ip)
+      if (!success) {
+        return NextResponse.json(
+          { message: 'Demasiados intentos. Por favor espera unos minutos e intenta de nuevo.' },
+          { status: 429 }
+        )
+      }
     }
 
     const body = await request.json()
