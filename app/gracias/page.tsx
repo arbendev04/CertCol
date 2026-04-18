@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import { CheckCircle2, ArrowLeft, Clock, Mail } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { CheckCircle2, Clock, Mail } from 'lucide-react'
+import { Countdown } from './Countdown'
 
 export const metadata: Metadata = {
   title: 'Solicitud enviada',
@@ -52,14 +51,7 @@ export default function GraciasPage() {
           </div>
         </div>
 
-        <Button
-          render={<Link href="/" />}
-          variant="outline"
-          className="rounded-xl border-[#C2C6D2]/40 hover:bg-surface-container"
-        >
-            <ArrowLeft size={16} className="mr-2" />
-            Volver al inicio
-        </Button>
+        <Countdown />
       </div>
     </main>
   )
