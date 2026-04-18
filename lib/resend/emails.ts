@@ -2,11 +2,6 @@ import { Resend } from 'resend'
 import { ConfirmacionLead } from './templates/ConfirmacionLead'
 import { NotificacionAdmin } from './templates/NotificacionAdmin'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
-const FROM = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
-const ADMIN_EMAIL = process.env.RESEND_ADMIN_EMAIL ?? 'admin@certcol.co'
-
 interface LeadEmailData {
   id: string
   nombre_contacto: string
@@ -20,6 +15,8 @@ interface LeadEmailData {
 }
 
 export async function sendConfirmacionLead(data: LeadEmailData) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
+  const FROM = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
   await resend.emails.send({
     from: `certCol <${FROM}>`,
     to: data.email_contacto,
@@ -29,6 +26,9 @@ export async function sendConfirmacionLead(data: LeadEmailData) {
 }
 
 export async function sendNotificacionAdmin(data: LeadEmailData) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
+  const FROM = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
+  const ADMIN_EMAIL = process.env.RESEND_ADMIN_EMAIL ?? 'admin@certcol.co'
   await resend.emails.send({
     from: `certCol <${FROM}>`,
     to: ADMIN_EMAIL,
