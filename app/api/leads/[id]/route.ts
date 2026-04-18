@@ -34,7 +34,8 @@ const updateSchema = z.object({
   estado: z
     .enum(['nuevo', 'contactado', 'en_proceso', 'aprobado', 'rechazado'])
     .optional(),
-  notas: z.string().max(2000).nullable().optional(),
+  notas: z.string().max(2000).nullable().optional()
+    .transform(val => val ? val.replace(/<[^>]*>/g, '') : val),
 })
 
 // ─── PATCH /api/leads/[id] — Actualizar estado/notas ────

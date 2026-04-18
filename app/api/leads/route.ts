@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const estado = searchParams.get('estado')
   const page = parseInt(searchParams.get('page') || '1')
-  const pageSize = parseInt(searchParams.get('pageSize') || '20')
+  const pageSize = Math.min(parseInt(searchParams.get('pageSize') || '20'), 100)
   const offset = (page - 1) * pageSize
 
   let query = supabase
