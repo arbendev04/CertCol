@@ -82,7 +82,7 @@ export function ConfirmacionLead({ data }: Props) {
             </Section>
 
             <Text style={paragraph}>
-              Si tienes alguna pregunta, responde este correo o escríbenos directamente.
+              Ante cualquier duda escribe a <strong>soporte@certcol.co</strong>
             </Text>
             <Text style={paragraph}>
               Gracias por confiar en certCol.
@@ -95,7 +95,7 @@ export function ConfirmacionLead({ data }: Props) {
           {/* Footer */}
           <Section style={footer}>
             <Text style={footerText}>
-              certCol · Bogotá, Colombia
+              certCol · Medellín, Colombia
             </Text>
             <Text style={footerText}>
               Este correo fue enviado porque completaste el formulario en certcol.co
