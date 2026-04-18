@@ -27,14 +27,14 @@ export default async function AdminLayout({
         <div className="h-16 flex items-center px-5 border-b border-outline-variant/15">
           <Link href="/admin" className="flex items-center gap-2.5">
             <Image
-              src="/img/logo.webp"
+              src="/img/logo-claro.webp"
               alt="certCol"
               width={130}
               height={40}
               className="h-9 w-auto block dark:hidden"
             />
             <Image
-              src="/img/cert.webp"
+              src="/img/logo-oscuro.webp"
               alt="certCol"
               width={130}
               height={40}

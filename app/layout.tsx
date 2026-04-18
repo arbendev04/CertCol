@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     siteName: 'certCol',
     images: [
       {
-        url: '/img/og-image.png',
+        url: '/img/og.webp',
         width: 1200,
         height: 630,
         alt: 'certCol — Compraventa de Certificados de Inversión para el Desarrollo',
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'certCol — Vende tu CID en Colombia',
     description: 'Registro en 5 minutos, respuesta garantizada en 24 horas.',
-    images: ['/img/og-image.png'],
+    images: ['/img/og.webp'],
   },
   robots: {
     index: true,
@@ -87,7 +87,7 @@ const organizationSchema = {
   '@type': 'Organization',
   name: 'certCol',
   url: baseUrl,
-  logo: `${baseUrl}/img/logo.webp`,
+  logo: `${baseUrl}/img/logo-claro.webp`,
   description:
     'Plataforma colombiana especializada en la compraventa de Certificados de Inversión para el Desarrollo (CID).',
   areaServed: 'CO',

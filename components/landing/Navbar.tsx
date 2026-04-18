@@ -35,7 +35,7 @@ export function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/img/logo.webp"
+            src="/img/logo-claro.webp"
             alt="certCol"
             width={240}
             height={72}
@@ -43,7 +43,7 @@ export function Navbar() {
             priority
           />
           <Image
-            src="/img/cert.webp"
+            src="/img/logo-oscuro.webp"
             alt="certCol"
             width={240}
             height={72}

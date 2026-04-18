@@ -44,7 +44,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-10">
           <Image
-            src="/img/logo.webp"
+            src="/img/logo-claro.webp"
             alt="certCol"
             width={140}
             height={42}
@@ -52,7 +52,7 @@ export default function LoginPage() {
             priority
           />
           <Image
-            src="/img/cert.webp"
+            src="/img/logo-oscuro.webp"
             alt="certCol"
             width={140}
             height={42}

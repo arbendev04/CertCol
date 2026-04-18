@@ -12,14 +12,14 @@ export function Footer() {
           {/* Marca */}
           <div>
             <Image
-              src="/img/logo.webp"
+              src="/img/logo-claro.webp"
               alt="certCol"
               width={180}
               height={54}
               className="h-[54px] w-auto mb-4 block dark:hidden"
             />
             <Image
-              src="/img/cert.webp"
+              src="/img/logo-oscuro.webp"
               alt="certCol"
               width={180}
               height={54}
