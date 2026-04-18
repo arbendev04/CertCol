@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { leadServerSchema } from '@/lib/validations/lead.schema'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { sendConfirmacionLead, sendNotificacionAdmin } from '@/lib/resend/emails'
 
 // ─── POST /api/leads — Crear un nuevo lead ───────────────
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     // Calcular valor nominal en el servidor (no confiar en el cliente)
     const valor_nominal = Math.round(data.valor_inversion * 1.65)
 
-    const supabase = await createClient()
+    const supabase = createAdminClient()
 
     const { data: lead, error } = await supabase
       .from('leads')
