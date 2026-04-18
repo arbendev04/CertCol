@@ -467,7 +467,7 @@ export function CertForm() {
                     onCheckedChange={(checked) =>
                       setValue('habeas_data', checked === true, { shouldValidate: true })
                     }
-                    className="mt-0.5 border-[#C2C6D2] data-[state=checked]:bg-[#0A4D8C] data-[state=checked]:border-[#0A4D8C]"
+                    className="mt-1 shrink-0 border-[#C2C6D2] data-[state=checked]:bg-[#0A4D8C] data-[state=checked]:border-[#0A4D8C]"
                   />
                   <div>
                     <Label htmlFor="habeas_data" className="text-sm text-[#424750] leading-relaxed cursor-pointer">
@@ -476,11 +476,11 @@ export function CertForm() {
                         href="/politica-de-datos"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[#0A4D8C] underline underline-offset-2 hover:text-[#003667]"
+                        className="text-[#0A4D8C] underline underline-offset-2 hover:text-[#003667] font-medium"
                       >
                         Política de Tratamiento de Datos Personales
-                      </a>{' '}
-                      de certCol, conforme a la Ley 1581 de 2012.{' '}
+                      </a>
+                      {' '}de certCol, conforme a la Ley 1581 de 2012.{' '}
                       <span className="text-red-500">*</span>
                     </Label>
                     <FieldError message={errors.habeas_data?.message} />
@@ -537,7 +537,7 @@ export function CertForm() {
           </div>
 
           {step === STEPS.length - 1 && (
-            <p className="text-center text-xs text-[#424750]/40 mt-4">
+            <p className="text-center text-xs text-white/40 mt-4">
               Al enviar acepta que certCol se ponga en contacto con usted. Puede revocar este consentimiento en cualquier momento.
             </p>
           )}
