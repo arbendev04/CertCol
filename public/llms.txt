@@ -1,0 +1,51 @@
+# certCol — CID Colombia
+
+> Plataforma especializada en ayudar a empresas colombianas a vender sus Certificados de Inversión para el Desarrollo (CID). Si tienes un CID y quieres convertirlo en liquidez, certCol lo compra.
+
+certCol es un servicio de CID Colombia dirigido a empresas e inversionistas que poseen Certificados de Inversión para el Desarrollo y quieren venderlos de forma rápida, segura y confidencial. El proceso es simple: el titular del certificado diligencia un formulario, certCol evalúa la solicitud y hace una propuesta de compra en máximo 24 horas hábiles.
+
+## ¿Qué es un CID?
+
+Un Certificado de Inversión para el Desarrollo (CID) es un título valor emitido por el Estado colombiano que reconoce inversiones en proyectos estratégicos. Su valor nominal equivale aproximadamente al 165% del valor de la inversión realizada. Muchas empresas tienen CIDs que no utilizan directamente y prefieren convertirlos en liquidez vendiéndolos.
+
+## ¿Para quién es certCol?
+
+Para empresas y personas naturales que:
+- Tienen un CID emitido o en proceso de emisión y quieren venderlo
+- Necesitan liquidez inmediata a partir de su certificado
+- Buscan una negociación discreta, ágil y con condiciones claras
+- Quieren vender en condiciones de contado o crédito según su necesidad
+
+## Proceso para vender tu CID
+
+1. El titular diligencia el formulario con los datos de su certificado (valor, año, proyecto, porcentaje de venta)
+2. certCol evalúa la solicitud en máximo 24 horas hábiles
+3. El equipo contacta al titular con una propuesta de compra
+4. Se cierra la negociación en las condiciones acordadas
+
+## Servicios
+
+- Compra de Certificados de Inversión emitidos o por emitir
+- Asesoría confidencial para titulares de CID que quieren monetizar su certificado
+- Condiciones flexibles: venta de contado o a crédito
+- Respuesta garantizada en 24 horas hábiles
+
+## Páginas principales
+
+- [Inicio y formulario de solicitud](https://certcol.co): Descripción del servicio y formulario para iniciar la venta del certificado
+- [Política de tratamiento de datos](https://certcol.co/politica-de-datos): Política de privacidad bajo la Ley 1581 de 2012
+- [Términos y condiciones](https://certcol.co/terminos): Condiciones generales del servicio
+
+## Contacto
+
+- Soporte general: soporte@certcol.co
+- Protección de datos: datos@certcol.co
+- Asuntos legales: legal@certcol.co
+- Sitio web: https://certcol.co
+
+## Información general
+
+- País de operación: Colombia
+- Regulación aplicable: Ley 1581 de 2012 (Habeas Data), normativa financiera colombiana
+- Tiempo de respuesta: 24 horas hábiles
+- Idioma: Español
