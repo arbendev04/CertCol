@@ -101,17 +101,19 @@ export function Footer() {
         </div>
 
         {/* Créditos */}
-        <p className="mt-4 text-center text-[11px] text-on-surface/25">
-          Desarrollado por{' '}
-          <a
-            href="https://www.linkedin.com/in/santiago-arango-benjumea-383864219/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-on-surface/50 transition-colors"
-          >
-            ArbenDev
-          </a>
-        </p>
+        <div className="mt-8 pt-5 border-t border-outline-variant/10 text-center">
+          <p className="text-[11px] text-on-surface/25">
+            Desarrollado por{' '}
+            <a
+              href="https://www.linkedin.com/in/santiago-arango-benjumea-383864219/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#00C896] dark:hover:text-[#00C896] transition-colors font-medium"
+            >
+              ArbenDev
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   )
