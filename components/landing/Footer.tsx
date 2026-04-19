@@ -99,6 +99,19 @@ export function Footer() {
             Cumplimos con la Ley 1581 de 2012 (Habeas Data) y la normativa colombiana vigente.
           </p>
         </div>
+
+        {/* Créditos */}
+        <p className="mt-4 text-center text-[11px] text-on-surface/25">
+          Desarrollado por{' '}
+          <a
+            href="https://www.linkedin.com/in/santiago-arango-benjumea-383864219/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-on-surface/50 transition-colors"
+          >
+            ArbenDev
+          </a>
+        </p>
       </div>
     </footer>
   )
