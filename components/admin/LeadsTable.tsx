@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { ExternalLink, X } from 'lucide-react'
+import { ExternalLink, X, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
 import type { Lead } from '@/types/lead'
 import { ESTADO_LABELS, ESTADO_COLORS } from '@/types/lead'
 
@@ -40,8 +40,29 @@ const FILTROS_INICIAL: Filtros = {
   valorMax: '',
 }
 
+type SortField = 'fecha' | 'valor'
+type SortDir = 'asc' | 'desc'
+
 export function LeadsTable({ leads }: { leads: Lead[] }) {
   const [filtros, setFiltros] = useState<Filtros>(FILTROS_INICIAL)
+  const [sortField, setSortField] = useState<SortField>('fecha')
+  const [sortDir, setSortDir] = useState<SortDir>('desc')
+
+  function toggleSort(field: SortField) {
+    if (sortField === field) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
+    } else {
+      setSortField(field)
+      setSortDir('desc')
+    }
+  }
+
+  function SortIcon({ field }: { field: SortField }) {
+    if (sortField !== field) return <ArrowUpDown size={13} className="opacity-30" />
+    return sortDir === 'asc'
+      ? <ArrowUp size={13} className="text-[#0A4D8C]" />
+      : <ArrowDown size={13} className="text-[#0A4D8C]" />
+  }
 
   const set = (key: keyof Filtros, value: string) =>
     setFiltros((prev) => ({ ...prev, [key]: value }))
@@ -74,6 +95,14 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
     if (filtros.valorMax && lead.valor_inversion > Number(filtros.valorMax)) return false
 
     return true
+  })
+
+  const sorted = [...filtered].sort((a, b) => {
+    const mul = sortDir === 'asc' ? 1 : -1
+    if (sortField === 'fecha') {
+      return mul * (new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+    }
+    return mul * (a.valor_inversion - b.valor_inversion)
   })
 
   return (
@@ -169,6 +198,29 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
             </span>
           </div>
         </div>
+
+        {/* Ordenar — solo mobile */}
+        <div className="flex gap-2 lg:hidden">
+          <span className="text-[10px] font-semibold text-on-surface/40 uppercase tracking-widest self-center">
+            Ordenar:
+          </span>
+          {(['fecha', 'valor'] as SortField[]).map((field) => (
+            <button
+              key={field}
+              onClick={() => toggleSort(field)}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                sortField === field
+                  ? 'bg-[#0A4D8C] text-white'
+                  : 'bg-surface-container text-on-surface/60 hover:bg-surface-high'
+              }`}
+            >
+              {field === 'fecha' ? 'Fecha' : 'Precio'}
+              {sortField === field
+                ? sortDir === 'asc' ? <ArrowUp size={11} /> : <ArrowDown size={11} />
+                : <ArrowUpDown size={11} className="opacity-50" />}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* ── Vista mobile: cards ── */}
@@ -178,7 +230,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
             No hay solicitudes con estos filtros
           </p>
         ) : (
-          filtered.map((lead) => (
+          sorted.map((lead) => (
             <Link
               key={lead.id}
               href={`/admin/leads/${lead.id}`}
@@ -217,16 +269,32 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-surface-container">
-              {['Fecha', 'Razón social / NIT', 'Valor inversión', 'Valor nominal', 'Estado', ''].map(
-                (col) => (
-                  <th
-                    key={col}
-                    className="px-6 py-3 text-left text-xs font-semibold text-on-surface/40 uppercase tracking-widest"
-                  >
-                    {col}
-                  </th>
-                )
-              )}
+              <th className="px-6 py-3 text-left text-xs font-semibold text-on-surface/40 uppercase tracking-widest">
+                <button
+                  onClick={() => toggleSort('fecha')}
+                  className="flex items-center gap-1.5 hover:text-on-surface transition-colors"
+                >
+                  Fecha <SortIcon field="fecha" />
+                </button>
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-on-surface/40 uppercase tracking-widest">
+                Razón social / NIT
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-on-surface/40 uppercase tracking-widest">
+                <button
+                  onClick={() => toggleSort('valor')}
+                  className="flex items-center gap-1.5 hover:text-on-surface transition-colors"
+                >
+                  Valor inversión <SortIcon field="valor" />
+                </button>
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-on-surface/40 uppercase tracking-widest">
+                Valor nominal
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-on-surface/40 uppercase tracking-widest">
+                Estado
+              </th>
+              <th className="px-6 py-3" />
             </tr>
           </thead>
           <tbody>
@@ -237,7 +305,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                 </td>
               </tr>
             ) : (
-              filtered.map((lead) => (
+              sorted.map((lead) => (
                 <tr
                   key={lead.id}
                   className="border-b border-surface-container/50 hover:bg-surface-low transition-colors"
