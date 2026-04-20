@@ -82,7 +82,7 @@ export function ConfirmacionLead({ data }: Props) {
             </Section>
 
             <Text style={paragraph}>
-              Ante cualquier duda escribe a <strong>soporte@certcol.co</strong>
+              Ante cualquier duda escribe a <strong>contacto@certcol.co</strong>
             </Text>
             <Text style={paragraph}>
               Gracias por confiar en certCol.
