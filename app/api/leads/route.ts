@@ -6,14 +6,12 @@ import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { sendConfirmacionLead, sendNotificacionAdmin } from '@/lib/resend/emails'
 
 let ratelimit: Ratelimit | null = null
-try {
+if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
   ratelimit = new Ratelimit({
     redis: Redis.fromEnv(),
     limiter: Ratelimit.slidingWindow(5, '10 m'),
     analytics: true,
   })
-} catch {
-  // Si Redis no está configurado, el rate limiting se deshabilita (fail-open)
 }
 
 // ─── POST /api/leads — Crear un nuevo lead ───────────────
