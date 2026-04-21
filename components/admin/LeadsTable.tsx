@@ -22,6 +22,14 @@ function formatDate(iso: string) {
   }).format(new Date(iso))
 }
 
+function formatTime(iso: string) {
+  return new Intl.DateTimeFormat('es-CO', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  }).format(new Date(iso))
+}
+
 const ESTADOS = ['todos', 'nuevo', 'contactado', 'en_proceso', 'aprobado', 'rechazado'] as const
 
 interface Filtros {
@@ -257,6 +265,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                 <div className="text-right">
                   <p className="text-xs text-on-surface/40">Fecha</p>
                   <p className="text-xs text-on-surface/60">{formatDate(lead.created_at)}</p>
+                  <p className="text-[10px] text-on-surface/30">{formatTime(lead.created_at)}</p>
                 </div>
               </div>
             </Link>
@@ -310,8 +319,9 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                   key={lead.id}
                   className="border-b border-surface-container/50 hover:bg-surface-low transition-colors"
                 >
-                  <td className="px-6 py-4 text-on-surface/50 whitespace-nowrap">
-                    {formatDate(lead.created_at)}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <p className="text-on-surface/50">{formatDate(lead.created_at)}</p>
+                    <p className="text-xs text-on-surface/30">{formatTime(lead.created_at)}</p>
                   </td>
                   <td className="px-6 py-4">
                     <p className="font-medium text-[#003667] truncate max-w-[200px]">
