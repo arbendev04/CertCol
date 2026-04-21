@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 
 // ─── GET /api/leads/[id] — Obtener un lead ───────────────
 export async function GET(
@@ -15,8 +15,9 @@ export async function GET(
   }
 
   const { id } = await params
+  const admin = createAdminClient()
 
-  const { data: lead, error } = await supabase
+  const { data: lead, error } = await admin
     .from('leads')
     .select('*')
     .eq('id', id)
@@ -61,7 +62,9 @@ export async function PATCH(
     )
   }
 
-  const { data: lead, error } = await supabase
+  const admin = createAdminClient()
+
+  const { data: lead, error } = await admin
     .from('leads')
     .update({ ...parsed.data, updated_at: new Date().toISOString() })
     .eq('id', id)

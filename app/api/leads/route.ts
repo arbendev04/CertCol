@@ -125,7 +125,9 @@ export async function GET(request: NextRequest) {
   const pageSize = Math.min(parseInt(searchParams.get('pageSize') || '20'), 100)
   const offset = (page - 1) * pageSize
 
-  let query = supabase
+  const admin = createAdminClient()
+
+  let query = admin
     .from('leads')
     .select('*', { count: 'exact' })
     .order('created_at', { ascending: false })
