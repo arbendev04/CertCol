@@ -94,10 +94,16 @@ export async function POST(request: NextRequest) {
       porcentaje_max: data.porcentaje_max,
     }
 
-    Promise.all([
+    const [confirmacion, notificacion] = await Promise.allSettled([
       sendConfirmacionLead(emailData),
       sendNotificacionAdmin(emailData),
-    ]).catch((err) => console.error('[leads/POST] Error enviando correos:', err))
+    ])
+    if (confirmacion.status === 'rejected') {
+      console.error('[leads/POST] Error enviando confirmación al lead:', confirmacion.reason)
+    }
+    if (notificacion.status === 'rejected') {
+      console.error('[leads/POST] Error enviando notificación al admin:', notificacion.reason)
+    }
 
     return NextResponse.json({ id: lead.id }, { status: 201 })
   } catch (err) {
