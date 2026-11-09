@@ -18,15 +18,47 @@ interface Props {
     email_contacto: string
     telefono_contacto?: string
     razon_social: string
+    nit: string
+    anio_inversion: number
+    nombre_proyecto: string
+    certificado_emitido: boolean
+    fecha_emision?: string | null
+    condicion_venta: 'contado' | 'credito'
+    necesita_recursos: boolean
     valor_inversion: number
     valor_nominal: number
     porcentaje_min: number
     porcentaje_max: number
   }
+  savedToDb: boolean
 }
 
-export function NotificacionAdmin({ data }: Props) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+interface DetailRow {
+  label: string
+  val: string
+  highlight?: boolean
+}
+
+function buildRows(data: Props['data']): DetailRow[] {
+  return [
+    { label: 'Valor de inversión', val: formatCOP(data.valor_inversion) },
+    { label: 'Valor nominal CID', val: formatCOP(data.valor_nominal), highlight: true },
+    { label: 'Rango de venta', val: `${data.porcentaje_min}% – ${data.porcentaje_max}%` },
+    { label: 'NIT', val: data.nit },
+    { label: 'Año de inversión', val: String(data.anio_inversion) },
+    { label: 'Proyecto', val: data.nombre_proyecto },
+    { label: 'Certificado emitido', val: data.certificado_emitido ? 'Sí' : 'No' },
+    ...(data.fecha_emision ? [{ label: 'Fecha estimada de emisión', val: data.fecha_emision }] : []),
+    { label: 'Condición de venta', val: data.condicion_venta === 'contado' ? 'Contado' : 'Crédito' },
+    { label: 'Necesita recursos', val: data.necesita_recursos ? 'Sí' : 'No' },
+    { label: 'Contacto', val: data.nombre_contacto },
+    { label: 'Email', val: data.email_contacto },
+    ...(data.telefono_contacto ? [{ label: 'Celular', val: data.telefono_contacto }] : []),
+  ]
+}
+
+export function NotificacionAdmin({ data, savedToDb }: Props) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const leadUrl = `${appUrl}/admin/leads/${data.id}`
 
   return (
@@ -48,18 +80,21 @@ export function NotificacionAdmin({ data }: Props) {
               {data.razon_social}
             </Heading>
 
+            {!savedToDb && (
+              <Section style={warning}>
+                <Text style={warningTitle}>Este lead NO quedó guardado en la base de datos</Text>
+                <Text style={warningText}>
+                  La base de datos no estaba disponible al recibir el formulario. Este correo es la
+                  única copia: regístralo manualmente cuando la base de datos esté activa.
+                </Text>
+              </Section>
+            )}
+
             <Section style={card}>
               <Text style={cardTitle}>Datos del lead</Text>
               <Hr style={divider} />
 
-              {[
-                { label: 'Valor de inversión', val: formatCOP(data.valor_inversion) },
-                { label: 'Valor nominal CID', val: formatCOP(data.valor_nominal), highlight: true },
-                { label: 'Rango de venta', val: `${data.porcentaje_min}% – ${data.porcentaje_max}%` },
-                { label: 'Contacto', val: data.nombre_contacto },
-                { label: 'Email', val: data.email_contacto },
-                ...(data.telefono_contacto ? [{ label: 'Celular', val: data.telefono_contacto }] : []),
-              ].map(({ label, val, highlight }) => (
+              {buildRows(data).map(({ label, val, highlight }) => (
                 <Row key={label}>
                   <Column style={labelCol}>
                     <Text style={labelStyle}>{label}</Text>
@@ -71,11 +106,13 @@ export function NotificacionAdmin({ data }: Props) {
               ))}
             </Section>
 
-            <Section style={{ textAlign: 'center' as const, margin: '24px 0' }}>
-              <Link href={leadUrl} style={button}>
-                Ver detalle en el panel →
-              </Link>
-            </Section>
+            {savedToDb && (
+              <Section style={{ textAlign: 'center' as const, margin: '24px 0' }}>
+                <Link href={leadUrl} style={button}>
+                  Ver detalle en el panel →
+                </Link>
+              </Section>
+            )}
           </Section>
 
           {/* Footer */}
@@ -150,6 +187,26 @@ const cardTitle = {
 }
 
 const divider = { borderColor: '#E8E4E2', margin: '0 0 16px' }
+
+const warning = {
+  backgroundColor: '#FFF4E5',
+  borderRadius: '12px',
+  padding: '16px 24px',
+  margin: '0 0 24px',
+}
+
+const warningTitle = {
+  color: '#9A4B00',
+  fontSize: '14px',
+  fontWeight: '700',
+  margin: '0 0 6px',
+}
+
+const warningText = {
+  color: '#5C3A12',
+  fontSize: '13px',
+  margin: '0',
+}
 
 const labelCol = { width: '45%' }
 const valueCol = { width: '55%' }

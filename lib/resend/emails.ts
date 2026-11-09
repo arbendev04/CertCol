@@ -2,12 +2,19 @@ import { Resend } from 'resend'
 import { ConfirmacionLead } from './templates/ConfirmacionLead'
 import { NotificacionAdmin } from './templates/NotificacionAdmin'
 
-interface LeadEmailData {
+export interface LeadEmailData {
   id: string
   nombre_contacto: string
   email_contacto: string
   telefono_contacto?: string
   razon_social: string
+  nit: string
+  anio_inversion: number
+  nombre_proyecto: string
+  certificado_emitido: boolean
+  fecha_emision?: string | null
+  condicion_venta: 'contado' | 'credito'
+  necesita_recursos: boolean
   valor_inversion: number
   valor_nominal: number
   porcentaje_min: number
@@ -28,7 +35,9 @@ export async function sendConfirmacionLead(data: LeadEmailData) {
   if (error) throw new Error(`Resend confirmación: ${error.message}`)
 }
 
-export async function sendNotificacionAdmin(data: LeadEmailData) {
+// When savedToDb is false this email is the only durable copy of the lead,
+// so it carries every form field and is flagged for manual registration.
+export async function sendNotificacionAdmin(data: LeadEmailData, savedToDb: boolean) {
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) throw new Error('RESEND_API_KEY no configurada')
   const resend = new Resend(apiKey)
@@ -37,8 +46,10 @@ export async function sendNotificacionAdmin(data: LeadEmailData) {
   const { error } = await resend.emails.send({
     from: `certCol <${FROM}>`,
     to: ADMIN_EMAIL,
-    subject: `Nuevo lead: ${data.razon_social}`,
-    react: NotificacionAdmin({ data }),
+    subject: savedToDb
+      ? `Nuevo lead: ${data.razon_social}`
+      : `[ACCIÓN REQUERIDA] Lead NO guardado en BD: ${data.razon_social}`,
+    react: NotificacionAdmin({ data, savedToDb }),
   })
   if (error) throw new Error(`Resend notificación admin: ${error.message}`)
 }

@@ -179,10 +179,20 @@ certcol-web/
 - **Vercel:** proyecto desplegado y activo. Variables de entorno configuradas en el panel de Vercel.
 - **Resend en Vercel:** `new Resend(key)` debe instanciarse dentro de cada función, NO en el top-level del módulo — de lo contrario el build falla si la env var no está presente.
 - **baseUrl:** usar `||` (no `??`) para el fallback de `NEXT_PUBLIC_APP_URL` — `??` no protege contra strings vacíos y `new URL('')` lanza Invalid URL.
+- **Keep-alive:** requiere `CRON_SECRET` en Vercel. Sin esa variable, el endpoint siempre responde 401 y el cron no mantiene nada activo.
 
 ---
 
 ## Historial de cambios
+
+### 2026-11-09 — Resiliencia del formulario ante inactividad del free tier
+
+Contexto: Supabase (free) pausa el proyecto tras ~7 días sin actividad en la BD y Upstash archiva bases free inactivas. Antes de este cambio cualquiera de los dos fallos devolvía 500 y el lead se perdía.
+
+- [x] **Rate limit fail-open** (`app/api/leads/route.ts`): si Upstash falla, se registra el error y se permite la solicitud.
+- [x] **Fallback por correo:** el `id` del lead se genera en el servidor (`randomUUID`). Si el insert en Supabase falla, el correo al admin lleva **todos** los campos del formulario y el asunto `[ACCIÓN REQUERIDA] Lead NO guardado en BD`, sin link al panel. Solo responde 500 si fallan la BD **y** el correo al admin.
+- [x] **Keep-alive diario:** `GET /api/cron/keepalive` (Vercel Cron en `vercel.json`, `0 12 * * *` UTC) hace un `select` a `leads` y un `SET keepalive` en Redis. Protegido con `CRON_SECRET` (Bearer). Responde 500 si algún servicio falla, para que quede visible en los logs de Vercel.
+- [ ] Verificado localmente: el endpoint devuelve 401 sin secreto o con un secreto incorrecto. El 2026-11-09 el dominio `nxygjavaxsgwhimlvvzs.supabase.co` no resolvía (ENOTFOUND), así que el proyecto está pausado o eliminado y hay que restaurarlo desde el dashboard. El cron previene la pausa, pero **no** reactiva un proyecto ya pausado.
 
 ### 2026-04-18 — Despliegue Vercel, animaciones y SEO
 
@@ -244,6 +254,8 @@ certcol-web/
 - [x] SEO: metadata, OG image, sitemap, robots.txt, schema JSON-LD
 
 ### Pendiente
+- [x] **Supabase restaurado** (2026-11-09): al restaurarlo se rotaron las API keys (publishable y secret), que ya están actualizadas en Vercel y `.env.local`. Los 8 leads existentes se conservaron. `CRON_SECRET` configurado en Vercel (Production).
+- [ ] **Deploy** de los cambios de resiliencia y keep-alive, y verificar en los logs de Vercel la primera ejecución del cron, incluido el ping a Upstash.
 - [ ] **Dominio:** configurar dominio `.co` o `.com.co` en Vercel y actualizar `RESEND_FROM_EMAIL` a `noreply@certcol.co`. Actualizar `NEXT_PUBLIC_APP_URL` en Vercel con el dominio final.
 
 ---

@@ -1,9 +1,17 @@
+import { randomUUID } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
+import { z } from 'zod'
 import { leadServerSchema } from '@/lib/validations/lead.schema'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
-import { sendConfirmacionLead, sendNotificacionAdmin } from '@/lib/resend/emails'
+import {
+  sendConfirmacionLead,
+  sendNotificacionAdmin,
+  type LeadEmailData,
+} from '@/lib/resend/emails'
+
+type LeadServerData = z.infer<typeof leadServerSchema>
 
 let ratelimit: Ratelimit | null = null
 if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
@@ -14,18 +22,28 @@ if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) 
   })
 }
 
+// Fail-open: if Upstash is unreachable (e.g. archived free DB), allow the request
+// instead of blocking lead capture.
+async function isRateLimited(request: NextRequest): Promise<boolean> {
+  if (!ratelimit) return false
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'anonymous'
+  try {
+    const { success } = await ratelimit.limit(ip)
+    return !success
+  } catch (err) {
+    console.error('[leads/POST] Rate limiter unavailable, allowing request:', err)
+    return false
+  }
+}
+
 // ─── POST /api/leads — Crear un nuevo lead ───────────────
 export async function POST(request: NextRequest) {
   try {
-    if (ratelimit) {
-      const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'anonymous'
-      const { success } = await ratelimit.limit(ip)
-      if (!success) {
-        return NextResponse.json(
-          { message: 'Demasiados intentos. Por favor espera unos minutos e intenta de nuevo.' },
-          { status: 429 }
-        )
-      }
+    if (await isRateLimited(request)) {
+      return NextResponse.json(
+        { message: 'Demasiados intentos. Por favor espera unos minutos e intenta de nuevo.' },
+        { status: 429 }
+      )
     }
 
     const body = await request.json()
@@ -47,11 +65,72 @@ export async function POST(request: NextRequest) {
     // Calcular valor nominal en el servidor (no confiar en el cliente)
     const valor_nominal = Math.round(data.valor_inversion * 1.65)
 
-    const supabase = createAdminClient()
+    // ID generated here so the lead keeps the same identifier whether it lands
+    // in the DB or only in the fallback admin email.
+    const leadId = randomUUID()
+    const savedToDb = await saveLead(leadId, data, valor_nominal)
 
-    const { data: lead, error } = await supabase
+    const emailData: LeadEmailData = {
+      id: leadId,
+      nombre_contacto: data.nombre_contacto,
+      email_contacto: data.email_contacto,
+      telefono_contacto: data.telefono_contacto ?? undefined,
+      razon_social: data.razon_social,
+      nit: data.nit,
+      anio_inversion: data.anio_inversion,
+      nombre_proyecto: data.nombre_proyecto,
+      certificado_emitido: data.certificado_emitido,
+      fecha_emision: data.fecha_emision ?? null,
+      condicion_venta: data.condicion_venta,
+      necesita_recursos: data.necesita_recursos,
+      valor_inversion: data.valor_inversion,
+      valor_nominal,
+      porcentaje_min: data.porcentaje_min,
+      porcentaje_max: data.porcentaje_max,
+    }
+
+    const [confirmacion, notificacion] = await Promise.allSettled([
+      sendConfirmacionLead(emailData),
+      sendNotificacionAdmin(emailData, savedToDb),
+    ])
+    if (confirmacion.status === 'rejected') {
+      console.error('[leads/POST] Error enviando confirmación al lead:', confirmacion.reason)
+    }
+    if (notificacion.status === 'rejected') {
+      console.error('[leads/POST] Error enviando notificación al admin:', notificacion.reason)
+    }
+
+    // Lead is only lost if neither the DB nor the admin email stored it.
+    if (!savedToDb && notificacion.status === 'rejected') {
+      return NextResponse.json(
+        { message: 'Error al guardar la solicitud. Intente nuevamente.' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ id: leadId }, { status: 201 })
+  } catch (err) {
+    console.error('[leads/POST] Unexpected error:', err)
+    return NextResponse.json(
+      { message: 'Error interno del servidor' },
+      { status: 500 }
+    )
+  }
+}
+
+// Returns false instead of throwing so a paused/unreachable Supabase project
+// never blocks lead capture.
+async function saveLead(
+  leadId: string,
+  data: LeadServerData,
+  valor_nominal: number
+): Promise<boolean> {
+  try {
+    const supabase = createAdminClient()
+    const { error } = await supabase
       .from('leads')
       .insert({
+        id: leadId,
         valor_inversion: data.valor_inversion,
         valor_nominal,
         porcentaje_min: data.porcentaje_min,
@@ -70,48 +149,15 @@ export async function POST(request: NextRequest) {
         habeas_data: data.habeas_data,
         estado: 'nuevo',
       })
-      .select()
-      .single()
 
     if (error) {
-      console.error('[leads/POST] Supabase error:', error)
-      return NextResponse.json(
-        { message: 'Error al guardar la solicitud. Intente nuevamente.' },
-        { status: 500 }
-      )
+      console.error('[leads/POST] Supabase error, falling back to admin email:', error)
+      return false
     }
-
-    // Enviar correos en paralelo (sin bloquear la respuesta si fallan)
-    const emailData = {
-      id: lead.id,
-      nombre_contacto: data.nombre_contacto,
-      email_contacto: data.email_contacto,
-      telefono_contacto: data.telefono_contacto ?? undefined,
-      razon_social: data.razon_social,
-      valor_inversion: data.valor_inversion,
-      valor_nominal,
-      porcentaje_min: data.porcentaje_min,
-      porcentaje_max: data.porcentaje_max,
-    }
-
-    const [confirmacion, notificacion] = await Promise.allSettled([
-      sendConfirmacionLead(emailData),
-      sendNotificacionAdmin(emailData),
-    ])
-    if (confirmacion.status === 'rejected') {
-      console.error('[leads/POST] Error enviando confirmación al lead:', confirmacion.reason)
-    }
-    if (notificacion.status === 'rejected') {
-      console.error('[leads/POST] Error enviando notificación al admin:', notificacion.reason)
-    }
-
-    return NextResponse.json({ id: lead.id }, { status: 201 })
+    return true
   } catch (err) {
-    console.error('[leads/POST] Unexpected error:', err)
-    return NextResponse.json(
-      { message: 'Error interno del servidor' },
-      { status: 500 }
-    )
+    console.error('[leads/POST] Supabase unreachable, falling back to admin email:', err)
+    return false
   }
 }
 
